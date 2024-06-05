@@ -26,6 +26,7 @@ export function ThemedText({
         type === 'defaultSemiBold' ? styles.defaultSemiBold : undefined,
         type === 'subtitle' ? styles.subtitle : undefined,
         type === 'link' ? styles.link : undefined,
+
         style,
       ]}
       {...rest}
@@ -33,11 +34,13 @@ export function ThemedText({
   );
 }
 
+
 const styles = StyleSheet.create({
   default: {
     fontSize: 16,
     lineHeight: 24,
   },
+
   defaultSemiBold: {
     fontSize: 16,
     lineHeight: 24,

@@ -24,3 +24,18 @@ export const Colors = {
     tabIconSelected: tintColorDark,
   },
 };
+
+export const Buttoncolor={
+  bgreen:'#16A085',
+  bblue:'#2C3E50',
+  white:'#fff',
+};
+
+export const Inputtextname={
+    bgreen:'#16A085',
+    bblue:'#2C3E50',
+    white:'#fff',
+    coolgray:'#9CA3AF',
+    da:'ECEDEE'
+
+  };

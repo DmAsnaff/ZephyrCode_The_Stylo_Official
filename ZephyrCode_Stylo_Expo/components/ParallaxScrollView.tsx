@@ -1,5 +1,5 @@
 import type { PropsWithChildren, ReactElement } from 'react';
-import { StyleSheet, useColorScheme } from 'react-native';
+import { StyleSheet, useColorScheme,Text, View } from 'react-native';
 import Animated, {
   interpolate,
   useAnimatedRef,
@@ -12,14 +12,19 @@ import { ThemedView } from '@/components/ThemedView';
 const HEADER_HEIGHT = 250;
 
 type Props = PropsWithChildren<{
-  headerImage: ReactElement;
   headerBackgroundColor: { dark: string; light: string };
+  headerTitle: string;
+  headerSubtitle: string;
+  //pageBackgroundColor: { dark: string; light: string }; // Add this line
+
 }>;
 
 export default function ParallaxScrollView({
   children,
-  headerImage,
   headerBackgroundColor,
+  headerTitle,
+  headerSubtitle,
+ // pageBackgroundColor, // Add this line
 }: Props) {
   const colorScheme = useColorScheme() ?? 'light';
   const scrollRef = useAnimatedRef<Animated.ScrollView>();
@@ -51,7 +56,11 @@ export default function ParallaxScrollView({
             { backgroundColor: headerBackgroundColor[colorScheme] },
             headerAnimatedStyle,
           ]}>
-          {headerImage}
+          <View style={styles.headerTextContainer}>
+           <Text style={styles.headerTitle}>{headerTitle}</Text>
+           <Text style={styles.headerSubtitle}>{headerSubtitle}</Text>
+          </View>
+    
         </Animated.View>
         <ThemedView style={styles.content}>{children}</ThemedView>
       </Animated.ScrollView>
@@ -64,8 +73,9 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   header: {
-    height: 250,
+    height: 200,
     overflow: 'hidden',
+    borderRadius:15,
   },
   content: {
     flex: 1,
@@ -73,4 +83,22 @@ const styles = StyleSheet.create({
     gap: 16,
     overflow: 'hidden',
   },
+
+  headerTextContainer: {
+    position: 'absolute',
+    padding: 32,
+    top: 70,
+  },
+  headerTitle: {
+    fontSize: 40,
+    fontWeight: 'bold',
+    color: '#fff',
+  },
+  headerSubtitle: {
+    fontSize: 16,
+    color: '#fff',
+  },
+
+
+
 });
