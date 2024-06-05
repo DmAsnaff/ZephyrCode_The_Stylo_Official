@@ -4,6 +4,8 @@ import { Stack } from 'expo-router';
 import * as SplashScreen from 'expo-splash-screen';
 import { useEffect } from 'react';
 import 'react-native-reanimated';
+import { Inputtextname,Colors,Buttoncolor } from '@/constants/Colors';
+import { StatusBar } from 'expo-status-bar';
 
 import { useColorScheme } from '@/hooks/useColorScheme';
 
@@ -28,9 +30,15 @@ export default function RootLayout() {
 
   return (
     <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
+      <StatusBar 
+        style={colorScheme === 'dark' ? 'light' : 'dark'} 
+        backgroundColor={colorScheme === 'dark' ? '#2C3E50' : '#FFFFFF'}
+      />
       <Stack>
-        <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
+      <Stack.Screen name="index" options={{ headerShown: false, headerStyle:{backgroundColor:'#fff'} }}/>
+        <Stack.Screen name="(tabs)" options={{ headerShown: false}} />
         <Stack.Screen name="+not-found" />
+        <Stack.Screen name="login"/>
       </Stack>
     </ThemeProvider>
   );
