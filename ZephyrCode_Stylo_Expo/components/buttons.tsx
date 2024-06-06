@@ -40,6 +40,9 @@ const styles = StyleSheet.create({
     borderRadius: 4,
     alignItems: 'center',
     justifyContent: 'center',
+    width: 350, // Width to match the image
+    marginTop: 18, // Spacing similar to the image
+    marginBottom: 4
   },
   text: {
     fontSize: 18,
