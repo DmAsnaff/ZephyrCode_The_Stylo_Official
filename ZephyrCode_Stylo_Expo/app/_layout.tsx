@@ -39,6 +39,8 @@ export default function RootLayout() {
         <Stack.Screen name="(tabs)" options={{ headerShown: false}} />
         <Stack.Screen name="+not-found" />
         <Stack.Screen name="login"/>
+        <Stack.Screen name="help1"options={{ title:'Help',headerShown: true, headerStyle:{backgroundColor:'#2C3E50'} ,  headerTintColor: '#FFFFFF' }}/>
+        <Stack.Screen name="help_2"options={{ title:'Help',headerShown: true, headerStyle:{backgroundColor:'#2C3E50'},  headerTintColor: '#FFFFFF'  }}/>
       </Stack>
     </ThemeProvider>
   );
