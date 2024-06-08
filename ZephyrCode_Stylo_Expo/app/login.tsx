@@ -141,8 +141,8 @@ export default function TabTwoScreen() {
                 </ThemedView>
 
       <Button
-       title="SIGN IN"
-       onPress={() => router.push('/login')} 
+       title="Sign Up"
+       onPress={() => router.push('/help1')} 
          filled     
        style={{
        marginTop:18,
