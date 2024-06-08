@@ -35,10 +35,11 @@ export default function RootLayout() {
         backgroundColor={colorScheme === 'dark' ? '#2C3E50' : '#FFFFFF'}
       />
       <Stack>
-      <Stack.Screen name="index" options={{ headerShown: false, headerStyle:{backgroundColor:'#fff'} }}/>
+      <Stack.Screen name="index" options={{ title: 'Welcome',headerShown: false, headerStyle:{backgroundColor:'#fff'} }}/>
         <Stack.Screen name="(tabs)" options={{ headerShown: false}} />
         <Stack.Screen name="+not-found" />
-        <Stack.Screen name="login"/>
+        <Stack.Screen name="login"  options={{title: 'Login' ,headerShown: false, headerStyle:{backgroundColor:'#fff'} }}/>
+        <Stack.Screen name="register" options={{title: 'Register' ,headerShown: false, headerStyle:{backgroundColor:'#fff'} }}/>
         <Stack.Screen name="help1"options={{ title:'Help',headerShown: true, headerStyle:{backgroundColor:'#2C3E50'} ,  headerTintColor: '#FFFFFF' }}/>
         <Stack.Screen name="help_2"options={{ title:'Help',headerShown: true, headerStyle:{backgroundColor:'#2C3E50'},  headerTintColor: '#FFFFFF'  }}/>
       </Stack>

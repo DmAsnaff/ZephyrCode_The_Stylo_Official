@@ -1,5 +1,6 @@
 import express from "express"
 import bodyParser from "body-parser"
+import authenticationRouter from './routes'
 
 const app = express()
 const PORT = 5000
@@ -32,6 +33,8 @@ app.post('/users', (req,res) => {
     users.push(newUser)
     return res.send("success")
 })
+
+app.use(authenticationRouter)
 
 app.listen( PORT, ()=> {
     console.log("Backend is running on", PORT)
