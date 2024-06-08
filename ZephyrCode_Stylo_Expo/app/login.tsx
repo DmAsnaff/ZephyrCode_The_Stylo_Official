@@ -214,7 +214,7 @@ export default function TabTwoScreen() {
 
       <Button
        title="Sign Up"
-       onPress={() => router.push('/login')} 
+       onPress={() => router.push('/help1')} 
          filled     
        style={{
        marginTop:18,
