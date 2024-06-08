@@ -14,7 +14,7 @@ import { Link,Stack, useRouter } from 'expo-router';
 
 
 export default function TabTwoScreen() {
-  const router = useRouter();  // Add this line to get the router instance
+  const router = useRouter();  
 
   const textColor = useThemeColor({ light: '#11181C', dark: '#ECEDEE' }, 'text');
   const checkcolor = useThemeColor({ light: Buttoncolor.bblue, dark: Buttoncolor.bgreen }, 'text');
@@ -27,70 +27,10 @@ export default function TabTwoScreen() {
 
     <ParallaxScrollView
       headerBackgroundColor={{ light: '#2C3E50', dark: '#353636' }}
-      headerTitle="Welcome!"
-      headerSubtitle='sign up to continue'>
+      headerTitle="Welcome back,"
+      headerSubtitle='sign in to continue'>
   
-      <ThemedView style={{marginBottom:-7}}>
-        <Text style={{
-          color:textColor,
-          fontSize:16,
-          fontWeight:400,
-          marginVertical:8,
-        }}>Full Name</Text>
-
-        <ThemedView style={{
-          width:"100%",
-          height:48,
-          borderColor:Inputtextname.coolgray,
-          borderWidth:1,
-          borderRadius:8,
-          alignItems:"center",
-          justifyContent:"center",
-          paddingLeft:22          
-        }}>
-          
-          <TextInput placeholder='Enter your full name' 
-          placeholderTextColor={Inputtextname.coolgray}
-          keyboardType='email-address'
-          style={{
-            width:"100%",
-            color: textColor,  
-          }}
-          />
-        </ThemedView>
-      </ThemedView>
-
-
-      <ThemedView style={{marginBottom:-7}}>
-        <Text style={{
-          color:textColor,
-          fontSize:16,
-          fontWeight:400,
-          marginVertical:8,
-        }}>User Name </Text>
-
-        <ThemedView style={{
-          width:"100%",
-          height:48,
-          borderColor:Inputtextname.coolgray,
-          borderWidth:1,
-          borderRadius:8,
-          alignItems:"center",
-          justifyContent:"center",
-          paddingLeft:22          
-        }}>
-          
-          <TextInput placeholder='Enter user name' 
-          placeholderTextColor={Inputtextname.coolgray}
-          keyboardType='email-address'
-          style={{
-            width:"100%",
-            color: textColor,  
-          }}
-          />
-        </ThemedView>
-      </ThemedView>
-
+    
       <ThemedView style={{marginBottom:-7}}>
         <Text style={{
           color:textColor,
@@ -197,23 +137,11 @@ export default function TabTwoScreen() {
 
       <Text style={{
           color:textColor,
-          }}>I Accept the </Text>      
-          <Text style={{
-            fontWeight:800,
-            color:textColor,
-            }}>Terms of use</Text> 
-            <Text style={{
-          color:textColor,
-          }}> & </Text> 
-          <Text style={{
-          color:textColor,
-          fontWeight:800,
-          }}>Privacy Policy.</Text>
-
-      </ThemedView>
+          }}>Remember me and keep me logged in </Text>      
+                </ThemedView>
 
       <Button
-       title="Sign Up"
+       title="SIGN IN"
        onPress={() => router.push('/login')} 
          filled     
        style={{
@@ -286,8 +214,8 @@ export default function TabTwoScreen() {
           <Text style={{
             fontSize:16,
             color: textColor,
-          }}>Already have an Account?</Text>
-                <Link style={{color:textColor,fontSize:16,fontWeight:800,textDecorationLine: 'underline'}}href="/login"> Sign In</Link>
+          }}>Don't have an Account?</Text>
+                <Link style={{color:textColor,fontSize:16,fontWeight:800,textDecorationLine: 'underline'}}href="/register"> SIGN UP</Link>
 
       </ThemedView>
 

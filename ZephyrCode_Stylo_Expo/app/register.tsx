@@ -11,16 +11,38 @@ import { useState } from 'react';
 import Checkbox from 'expo-checkbox';
 import Button from '@/components/buttons';
 import { Link,Stack, useRouter } from 'expo-router';
+import axios from 'axios';
 
 
 export default function TabTwoScreen() {
-  const router = useRouter();  // Add this line to get the router instance
+  const router = useRouter();  
 
   const textColor = useThemeColor({ light: '#11181C', dark: '#ECEDEE' }, 'text');
   const checkcolor = useThemeColor({ light: Buttoncolor.bblue, dark: Buttoncolor.bgreen }, 'text');
 
   const [isPasswordShown, setIsPasswordShown] = useState(true)
   const [isChecked, setisChecked] = useState(false)
+
+  const [fullNameValue, setFullNameValue] = useState('');
+  const [fullNameError, setFullNameError] = useState('');
+  const [error, setError] = useState('');
+  
+
+
+  const [formValue, setFormValue] = useState({
+    username:'',
+  });
+
+
+  const formSubmitHandler = () => {
+    axios.post('/register', {data: formValue}).then(res => {
+      if (res.status === 201) 
+        router.push('/') 
+    })
+  }
+  
+
+  
 
   return (
     
@@ -29,6 +51,7 @@ export default function TabTwoScreen() {
       headerBackgroundColor={{ light: '#2C3E50', dark: '#353636' }}
       headerTitle="Welcome!"
       headerSubtitle='sign up to continue'>
+        {error && <Text> {error} </Text>}
   
       <ThemedView style={{marginBottom:-7}}>
         <Text style={{
@@ -49,7 +72,10 @@ export default function TabTwoScreen() {
           paddingLeft:22          
         }}>
           
-          <TextInput placeholder='Enter your full name' 
+          <TextInput
+          value=''
+          // onChange={}
+           placeholder='Enter your full name' 
           placeholderTextColor={Inputtextname.coolgray}
           keyboardType='email-address'
           style={{
@@ -122,7 +148,7 @@ export default function TabTwoScreen() {
       </ThemedView>
 
 
-      <ThemedView style={{marginBottom:1}}>
+      <ThemedView style={{marginBottom:20}}>
         <Text style={{
           color:textColor,
           fontSize:16,
@@ -171,17 +197,7 @@ export default function TabTwoScreen() {
         </ThemedView>
       </ThemedView>
       
-      <ThemedView style={{marginBottom:1}}>
-        <Text style={{
-          color:textColor,
-          fontSize:16,
-          fontWeight:600,
-          marginVertical:1,
-          textAlign:"right",
-          paddingRight:8
-        }}>Forgot Password?</Text>
-      </ThemedView>
-
+  
 
       <ThemedView style={{
         flexDirection:'row',
@@ -213,7 +229,7 @@ export default function TabTwoScreen() {
       </ThemedView>
 
       <Button
-       title="Sign Up"
+       title="SIGN UP"
        onPress={() => router.push('/login')} 
          filled     
        style={{
