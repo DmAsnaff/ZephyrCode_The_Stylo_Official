@@ -7,14 +7,14 @@ import { Inputtextname,Colors,Buttoncolor } from '@/constants/Colors';
 import { useThemeColor } from '@/hooks/useThemeColor';
 import { TouchableOpacity } from 'react-native';
 import {Ionicons} from "@expo/vector-icons"
-import { useState } from 'react';
+import React,{ useState } from 'react';
 import Checkbox from 'expo-checkbox';
 import Button from '@/components/buttons';
 import { Link,Stack, useRouter } from 'expo-router';
-import axios from 'axios';
+import axiosInstance from '@/constants/axiosInstance';
 
 
-export default function TabTwoScreen() {
+export default function Resister() {
   const router = useRouter();  
 
   const textColor = useThemeColor({ light: '#11181C', dark: '#ECEDEE' }, 'text');
@@ -22,27 +22,116 @@ export default function TabTwoScreen() {
 
   const [isPasswordShown, setIsPasswordShown] = useState(true)
   const [isChecked, setisChecked] = useState(false)
-
-  const [fullNameValue, setFullNameValue] = useState('');
-  const [fullNameError, setFullNameError] = useState('');
-  const [error, setError] = useState('');
-  
-
+  const [fullName, setFullNameValue] = useState('');
+  const [userName, setuserNameValue] = useState('');
+  const [email, setemailValue] = useState('');
+  const [password, setPasswordValue] = useState('');
+  const [loadingValue, setloadingValue ] = useState(false);
+  const [error, setError] = useState('')
 
   const [formValue, setFormValue] = useState({
-    username:'',
+   fullName:'',
+  userName: '',
+    email: '',
+    password: ''
   });
-
-
-  const formSubmitHandler = () => {
-    axios.post('/register', {data: formValue}).then(res => {
-      if (res.status === 201) 
-        router.push('/') 
-    })
-  }
   
 
+  const validateForm = () => {
+
+    const { fullName,userName, email, password,  } = formValue;
   
+    if (!fullName || !userName || !email || !password) {
+      alert('All fields are required');
+      return false;
+    }
+  
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(email)) {
+      alert('Please enter a valid email address');
+      return false;
+    }
+  
+    if (password.length < 6) {
+      alert('Password must be at least 6 characters long');
+      return false;
+    }
+  
+ 
+    return true;
+  };
+
+  // const [formValue, setFormValue] = useState({
+  //   username:'',
+  // });
+
+
+//   const registerSubmitHandler = async () => {
+//   if (!fullName || !userName || !email|| !password){
+//     console.log('All fields are required')
+//     return
+//   }
+
+//   setError('')
+//   setloadingValue(true)
+ 
+
+//   try {
+//   const response = await axios.post('/register', {
+//     fullName,
+//     userName,
+//     email,
+//     password
+//   })
+//   if(response.status === 201){
+//   console.log('Registered Successfully')
+//   router.push('/login')
+//   }
+// } catch(error: any){
+//   if (error.response && error.response.data) {
+//     setError(error.response.data.errorValue)
+//   } else {
+//     setError('an unexpected error occured')
+//   }
+//   }finally{
+//     setloadingValue(false)
+//   }
+//   }
+  
+
+    // axios.post('http://192.168.1.100:5000/register', {data: formValue}).then(res => {
+    //   if (res.status === 201) 
+    //     router.push('/') 
+    // })
+
+    
+
+    const formSubmitHandler = async() => {
+      console.log('hi', formValue)
+      // if (validateForm()) {
+      try {
+        await axiosInstance.post('/register', { data: formValue })
+          .then(res => {
+               console.log('hi2')
+            console.log({
+              res
+            })
+            if (res.status === 201) {
+              router.push('/login'); 
+            }
+          })
+          .catch(error => {
+            console.error('There was an error!', error);
+           
+          });
+        }
+        catch(er) {
+          console.log({er})
+        }
+      // }
+    };
+
+
 
   return (
     
@@ -51,7 +140,7 @@ export default function TabTwoScreen() {
       headerBackgroundColor={{ light: '#2C3E50', dark: '#353636' }}
       headerTitle="Welcome!"
       headerSubtitle='sign up to continue'>
-        {error && <Text> {error} </Text>}
+      {/* {error && <Text> {error} </Text>} */}
   
       <ThemedView style={{marginBottom:-7}}>
         <Text style={{
@@ -73,8 +162,10 @@ export default function TabTwoScreen() {
         }}>
           
           <TextInput
-          value=''
-          // onChange={}
+          // value={fullName}
+          // onChangeText={setFullNameValue}
+          value={formValue.fullName}
+          onChangeText={text => setFormValue({ ...formValue, fullName: text })}
            placeholder='Enter your full name' 
           placeholderTextColor={Inputtextname.coolgray}
           keyboardType='email-address'
@@ -106,9 +197,15 @@ export default function TabTwoScreen() {
           paddingLeft:22          
         }}>
           
-          <TextInput placeholder='Enter user name' 
+          <TextInput 
+          // value={userName}
+          // onChangeText={setuserNameValue}
+          value={formValue.userName}
+  onChangeText={text => setFormValue({ ...formValue, userName: text })}
+          placeholder='Enter user name' 
           placeholderTextColor={Inputtextname.coolgray}
           keyboardType='email-address'
+
           style={{
             width:"100%",
             color: textColor,  
@@ -136,14 +233,21 @@ export default function TabTwoScreen() {
           paddingLeft:22          
         }}>
           
-          <TextInput placeholder='Enter your Email address' 
+          <TextInput 
+          // value={email}
+          // onChangeText={setemailValue}
+          value={formValue.email}
+  onChangeText={text => setFormValue({ ...formValue, email: text })}
+          placeholder='Enter your Email address' 
           placeholderTextColor={Inputtextname.coolgray}
           keyboardType='email-address'
           style={{
             width:"100%",
-            color: textColor,  
-          }}
+            color: textColor}}
+          // style={{ borderColor: error.email ? 'red' : 'gray', borderWidth: 1 }} // Change border color based on error
           />
+          {/* {error.email && <Text style={{ color: 'red' }}>{error.email}</Text>}  */}
+          
         </ThemedView>
       </ThemedView>
 
@@ -167,9 +271,16 @@ export default function TabTwoScreen() {
           paddingLeft:22          
         }}>
           
-          <TextInput placeholder='Enter password' 
+          <TextInput 
+          // value={password}
+          // onChangeText={setPasswordValue}
+          value={formValue.password}
+          onChangeText={text => setFormValue({ ...formValue, password: text })}
+          placeholder='Enter password' 
           placeholderTextColor={Inputtextname.coolgray}
-          secureTextEntry={isPasswordShown}      
+          secureTextEntry={isPasswordShown}   
+          // errorMessage={error ? error : ''}
+   
           style={{
             width:"100%",
             color: textColor,  
@@ -230,7 +341,7 @@ export default function TabTwoScreen() {
 
       <Button
        title="SIGN UP"
-       onPress={() => router.push('/login')} 
+       onPress={formSubmitHandler} 
          filled     
        style={{
        marginTop:18,
