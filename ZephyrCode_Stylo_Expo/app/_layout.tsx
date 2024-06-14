@@ -42,6 +42,10 @@ export default function RootLayout() {
         <Stack.Screen name="register" options={{title: 'Register' ,headerShown: false, headerStyle:{backgroundColor:'#fff'} }}/>
         <Stack.Screen name="help1"options={{ title:'Help',headerShown: true, headerStyle:{backgroundColor:'#2C3E50'} ,  headerTintColor: '#FFFFFF' }}/>
         <Stack.Screen name="help_2"options={{ title:'Help',headerShown: true, headerStyle:{backgroundColor:'#2C3E50'},  headerTintColor: '#FFFFFF'  }}/>
+        <Stack.Screen name="help_3"options={{ title:'Help',headerShown: true, headerStyle:{backgroundColor:'#2C3E50'},  headerTintColor: '#FFFFFF'  }}/>
+        <Stack.Screen name="help_4"options={{ title:'Help',headerShown: true, headerStyle:{backgroundColor:'#2C3E50'},  headerTintColor: '#FFFFFF'  }}/>
+        <Stack.Screen name="profile_screen"options={{ title:'Profile',headerShown: true, headerStyle:{backgroundColor:'#2C3E50'},  headerTintColor: '#FFFFFF'  }}/>
+        <Stack.Screen name="edit_profile"options={{ title:'Profile',headerShown: true, headerStyle:{backgroundColor:'#2C3E50'},  headerTintColor: '#FFFFFF'  }}/>
       </Stack>
     </ThemeProvider>
   );
