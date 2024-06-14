@@ -4,6 +4,7 @@ import { FontAwesome } from '@expo/vector-icons';
 import Button from '@/components/buttons';
 import * as ImagePicker from 'expo-image-picker';
 import { useNavigation } from '@react-navigation/native';
+import {useRouter} from 'expo-router';
 
 const EditProfile: React.FC = () => {
   const [fullName, setFullName] = useState('');
@@ -11,12 +12,16 @@ const EditProfile: React.FC = () => {
   const [email, setEmail] = useState('');
   const [address, setAddress] = useState('');
   const [dob, setDob] = useState('');
- 
+  const router = useRouter();
+
+
   const handleSubmit = () => {
     
     const userData = { fullName, username, email, address, dob };
    
-    navigation.navigate('profile_screen', userData);
+    // router.push('profile_screen', userData);
+    router.push('profile_screen');
+
   };
 
   const [showOptions, setShowOptions] = useState(false);
@@ -93,11 +98,14 @@ const EditProfile: React.FC = () => {
             </TouchableOpacity>
           </View>
         )}
+        <View style={{paddingBottom:35}}>
         <Image
           source={picture ? { uri: picture } : require('@/assets/images/profile.png')}
           style={styles.profilePic}
           accessibilityLabel="Profile Picture"
         />
+        </View>
+
         <View style={styles.action}>
           <FontAwesome name="user-o" color="#05375a" size={20} />
           <TextInput
@@ -144,13 +152,20 @@ const EditProfile: React.FC = () => {
             style={styles.textInput}
           />
         </View>
+
+
+        
       </View>
+      <View style={{alignItems: 'center'}}>
       <Button
         title="Submit"
-        onPress={() => navigation.navigate('profile_screen')}
+        onPress={() => router.push('profile_screen')}
         filled
         style={styles.submitButton}
       />
+
+      </View>
+
     </SafeAreaView>
   );
 };
@@ -162,6 +177,7 @@ const styles = StyleSheet.create({
   profileContainer: {
     alignItems: 'center',
     paddingTop: 20,
+      paddingHorizontal: 30,
   },
   profilePic: {
     width: 100,
@@ -170,8 +186,8 @@ const styles = StyleSheet.create({
   },
   cameraIcon: {
     position: 'absolute',
-    top: '33%',
-    left: '60%',
+    top: '37%',
+    left: '65%',
     backgroundColor: 'rgba(0, 0, 0, 0.6)',
     borderRadius: 20,
     padding: 10,
@@ -179,7 +195,7 @@ const styles = StyleSheet.create({
   },
   action: {
     flexDirection: 'row',
-    marginTop: 10,
+    marginTop: 0,
     borderBottomWidth: 1,
     borderBottomColor: '#f2f2f2',
     paddingBottom: 5,
@@ -191,8 +207,9 @@ const styles = StyleSheet.create({
     color: '#05375a',
   },
   submitButton: {
-    marginTop: 150,
+    marginTop: 70,
     marginBottom: 4,
+    
   },
   optionsContainer: {
     position: 'absolute',
