@@ -19,9 +19,7 @@ export const registerContoller = async (req: Request, res: Response) => {
 //     })
 // }
 
-// console.log('im hitting')
-const {fullName,userName, email, password } = req.body
-// console.log(req.body)
+const {userName, email, password } = req.body
 try {
     const existingUser = await prisma.user.findUnique({ where: { email: email } })
 
@@ -30,7 +28,7 @@ try {
     }
 
     const newUser = await prisma.user.create({
-      data: { fullName, userName,email,password  }
+      data: {userName,email,password  }
     })
 
     res.status(201).json(newUser)

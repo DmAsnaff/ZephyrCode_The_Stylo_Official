@@ -1,20 +1,18 @@
-import { StyleSheet, Image,Text,TextInput, useColorScheme } from 'react-native';
-import { ExternalLink } from '@/components/ExternalLink';
+import { StyleSheet, Image,Text,TextInput } from 'react-native';
 import ParallaxScrollView from '@/components/ParallaxScrollView';
-import { ThemedText } from '@/components/ThemedText';
 import { ThemedView } from '@/components/ThemedView';
-import { Inputtextname,Colors,Buttoncolor } from '@/constants/Colors';
+import { Inputtextname,Buttoncolor } from '@/constants/Colors';
 import { useThemeColor } from '@/hooks/useThemeColor';
 import { TouchableOpacity } from 'react-native';
 import {Ionicons} from "@expo/vector-icons"
 import React,{ useState } from 'react';
 import Checkbox from 'expo-checkbox';
 import Button from '@/components/buttons';
-import { Link,Stack, useRouter } from 'expo-router';
+import { Link, useRouter } from 'expo-router';
 import axiosInstance from '@/constants/axiosInstance';
 
 
-export default function Resister() {
+export default function Register() {
   const router = useRouter();  
 
   const textColor = useThemeColor({ light: '#11181C', dark: '#ECEDEE' }, 'text');
@@ -22,16 +20,15 @@ export default function Resister() {
 
   const [isPasswordShown, setIsPasswordShown] = useState(true)
   const [isChecked, setisChecked] = useState(false)
-  const [fullName, setFullNameValue] = useState('');
-  const [userName, setuserNameValue] = useState('');
-  const [email, setemailValue] = useState('');
-  const [password, setPasswordValue] = useState('');
-  const [loadingValue, setloadingValue ] = useState(false);
-  const [error, setError] = useState('')
+  // const [fullName, setFullNameValue] = useState('');
+  // const [userName, setuserNameValue] = useState('');
+  // const [email, setemailValue] = useState('');
+  // const [password, setPasswordValue] = useState('');
+  // const [loadingValue, setloadingValue ] = useState(false);
+  // const [error, setError] = useState('')
 
   const [formValue, setFormValue] = useState({
-   fullName:'',
-  userName: '',
+    userName: '',
     email: '',
     password: ''
   });
@@ -39,9 +36,9 @@ export default function Resister() {
 
   const validateForm = () => {
 
-    const { fullName,userName, email, password,  } = formValue;
+    const { userName, email, password,  } = formValue;
   
-    if (!fullName || !userName || !email || !password) {
+    if ( !userName || !email || !password) {
       alert('All fields are required');
       return false;
     }
@@ -61,76 +58,30 @@ export default function Resister() {
     return true;
   };
 
-  // const [formValue, setFormValue] = useState({
-  //   username:'',
-  // });
-
-
-//   const registerSubmitHandler = async () => {
-//   if (!fullName || !userName || !email|| !password){
-//     console.log('All fields are required')
-//     return
-//   }
-
-//   setError('')
-//   setloadingValue(true)
- 
-
-//   try {
-//   const response = await axios.post('/register', {
-//     fullName,
-//     userName,
-//     email,
-//     password
-//   })
-//   if(response.status === 201){
-//   console.log('Registered Successfully')
-//   router.push('/login')
-//   }
-// } catch(error: any){
-//   if (error.response && error.response.data) {
-//     setError(error.response.data.errorValue)
-//   } else {
-//     setError('an unexpected error occured')
-//   }
-//   }finally{
-//     setloadingValue(false)
-//   }
-//   }
-  
-
-    // axios.post('http://192.168.1.100:5000/register', {data: formValue}).then(res => {
-    //   if (res.status === 201) 
-    //     router.push('/') 
-    // })
-
-    
-
-    const formSubmitHandler = async() => {
-      console.log('hi', formValue)
-      // if (validateForm()) {
+     const formSubmitHandler = async() => {
+      if (validateForm()) {
       try {
-        await axiosInstance.post('/register', { data: formValue })
+        await axiosInstance.post('/register', formValue)
           .then(res => {
-               console.log('hi2')
-            console.log({
-              res
-            })
+               console.log('User registered successfully')
             if (res.status === 201) {
               router.push('/login'); 
             }
           })
-          .catch(error => {
-            console.error('There was an error!', error);
-           
+          .catch(error=>{
+                console.error('An unexpected error occurred !', error);
+                if (error.response && error.response.status === 400) {
+                  console.error('Email already exists');
+            }
+        
           });
+  
+        } catch (er) {
+          console.log({ er });
         }
-        catch(er) {
-          console.log({er})
-        }
-      // }
+       }
     };
-
+  
 
 
   return (
@@ -142,42 +93,6 @@ export default function Resister() {
       headerSubtitle='sign up to continue'>
       {/* {error && <Text> {error} </Text>} */}
   
-      <ThemedView style={{marginBottom:-7}}>
-        <Text style={{
-          color:textColor,
-          fontSize:16,
-          fontWeight:400,
-          marginVertical:8,
-        }}>Full Name</Text>
-
-        <ThemedView style={{
-          width:"100%",
-          height:48,
-          borderColor:Inputtextname.coolgray,
-          borderWidth:1,
-          borderRadius:8,
-          alignItems:"center",
-          justifyContent:"center",
-          paddingLeft:22          
-        }}>
-          
-          <TextInput
-          // value={fullName}
-          // onChangeText={setFullNameValue}
-          value={formValue.fullName}
-          onChangeText={text => setFormValue({ ...formValue, fullName: text })}
-           placeholder='Enter your full name' 
-          placeholderTextColor={Inputtextname.coolgray}
-          keyboardType='email-address'
-          style={{
-            width:"100%",
-            color: textColor,  
-          }}
-          />
-        </ThemedView>
-      </ThemedView>
-
-
       <ThemedView style={{marginBottom:-7}}>
         <Text style={{
           color:textColor,
@@ -198,10 +113,8 @@ export default function Resister() {
         }}>
           
           <TextInput 
-          // value={userName}
-          // onChangeText={setuserNameValue}
           value={formValue.userName}
-  onChangeText={text => setFormValue({ ...formValue, userName: text })}
+          onChangeText={text => setFormValue((prev)=>({ ...prev, userName: text }))}
           placeholder='Enter user name' 
           placeholderTextColor={Inputtextname.coolgray}
           keyboardType='email-address'
@@ -234,10 +147,9 @@ export default function Resister() {
         }}>
           
           <TextInput 
-          // value={email}
-          // onChangeText={setemailValue}
+
           value={formValue.email}
-  onChangeText={text => setFormValue({ ...formValue, email: text })}
+          onChangeText={text => setFormValue((prev)=>({ ...prev, email: text }))}
           placeholder='Enter your Email address' 
           placeholderTextColor={Inputtextname.coolgray}
           keyboardType='email-address'
@@ -272,10 +184,8 @@ export default function Resister() {
         }}>
           
           <TextInput 
-          // value={password}
-          // onChangeText={setPasswordValue}
           value={formValue.password}
-          onChangeText={text => setFormValue({ ...formValue, password: text })}
+          onChangeText={text => setFormValue((prev)=>({...prev, password: text }))}
           placeholder='Enter password' 
           placeholderTextColor={Inputtextname.coolgray}
           secureTextEntry={isPasswordShown}   
@@ -341,6 +251,7 @@ export default function Resister() {
 
       <Button
        title="SIGN UP"
+      //  disabled={!isChecked}
        onPress={formSubmitHandler} 
          filled     
        style={{
