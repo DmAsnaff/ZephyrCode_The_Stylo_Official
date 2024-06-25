@@ -14,10 +14,10 @@ const Profile_screen: React.FC = () => {
       navigation.setOptions({
         headerRight: () => (
           <TouchableOpacity
-            style={{ marginRight: 10 }}
+            style={{ marginRight: 22 }}
             onPress={() => router.push('../edit_profile')}
           >
-            <Icon name="account-edit" size={25} color="#FFFFFF" />
+            <Icon name="account-edit" size={28} color="#9CA3AF" />
           </TouchableOpacity>
         ),
       });

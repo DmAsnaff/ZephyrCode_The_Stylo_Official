@@ -24,11 +24,11 @@ const help2: React.FC = () => {
       </ThemedText>
 
       <View style={styles.footer}>
-        <TouchableOpacity onPress={() => router.push('/home')}>
+        <TouchableOpacity onPress={() => router.push('/(tabs)')}>
           <ThemedText style={styles.footerTextBold}>SKIP</ThemedText>
         </TouchableOpacity>
 
-        <TouchableOpacity onPress={() => router.push('/help3')}>
+        <TouchableOpacity onPress={() => router.push('/help_3')}>
           <ThemedText style={styles.footerTextBold}>NEXT</ThemedText>
         </TouchableOpacity>
       </View>

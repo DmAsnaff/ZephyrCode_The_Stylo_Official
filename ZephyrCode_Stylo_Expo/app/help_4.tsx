@@ -24,7 +24,7 @@ const Help4: React.FC = () => {
       </ThemedText>
 
       <View style={styles.footer}>
-      <TouchableOpacity onPress={() => router.push('/tab')}>
+      <TouchableOpacity onPress={() => router.push('/(tabs)')}>
           <ThemedText style={styles.footerTextBold}>DONE</ThemedText>
         </TouchableOpacity>
         
@@ -66,7 +66,7 @@ const styles = StyleSheet.create({
     position: 'absolute',
     bottom: 20,
     flexDirection: 'row',
-    justifyContent: 'space-between',
+    justifyContent: 'flex-end',
     width: '100%',
     paddingHorizontal: 20,
   },
