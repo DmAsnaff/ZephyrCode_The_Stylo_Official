@@ -1,102 +1,157 @@
-import Ionicons from '@expo/vector-icons/Ionicons';
-import { StyleSheet, Image, Platform } from 'react-native';
+import React, { useState, useEffect } from 'react';
+import { View, Text, StyleSheet, TouchableOpacity, Image } from 'react-native';
+import { useNavigation } from '@react-navigation/native';
+import Icon from 'react-native-vector-icons/FontAwesome';
 
-import { Collapsible } from '@/components/Collapsible';
-import { ExternalLink } from '@/components/ExternalLink';
-import ParallaxScrollView from '@/components/ParallaxScrollView';
-import { ThemedText } from '@/components/ThemedText';
-import { ThemedView } from '@/components/ThemedView';
-
-export default function TabTwoScreen() {
-  return (
-    <ParallaxScrollView
-      headerBackgroundColor={{ light: '#D0D0D0', dark: '#353636' }}
-      headerImage={<Ionicons size={310} name="code-slash" style={styles.headerImage} />}>
-      <ThemedView style={styles.titleContainer}>
-        <ThemedText type="title">Explore</ThemedText>
-      </ThemedView>
-      <ThemedText>This app includes example code to help you get started.</ThemedText>
-      <Collapsible title="File-based routing">
-        <ThemedText>
-          This app has two screens:{' '}
-          <ThemedText type="defaultSemiBold">app/(tabs)/index.tsx</ThemedText> and{' '}
-          <ThemedText type="defaultSemiBold">app/(tabs)/explore.tsx</ThemedText>
-        </ThemedText>
-        <ThemedText>
-          The layout file in <ThemedText type="defaultSemiBold">app/(tabs)/_layout.tsx</ThemedText>{' '}
-          sets up the tab navigator.
-        </ThemedText>
-        <ExternalLink href="https://docs.expo.dev/router/introduction">
-          <ThemedText type="link">Learn more</ThemedText>
-        </ExternalLink>
-      </Collapsible>
-      <Collapsible title="Android, iOS, and web support">
-        <ThemedText>
-          You can open this project on Android, iOS, and the web. To open the web version, press{' '}
-          <ThemedText type="defaultSemiBold">w</ThemedText> in the terminal running this project.
-        </ThemedText>
-      </Collapsible>
-      <Collapsible title="Images">
-        <ThemedText>
-          For static images, you can use the <ThemedText type="defaultSemiBold">@2x</ThemedText> and{' '}
-          <ThemedText type="defaultSemiBold">@3x</ThemedText> suffixes to provide files for
-          different screen densities
-        </ThemedText>
-        <Image source={require('@/assets/images/react-logo.png')} style={{ alignSelf: 'center' }} />
-        <ExternalLink href="https://reactnative.dev/docs/images">
-          <ThemedText type="link">Learn more</ThemedText>
-        </ExternalLink>
-      </Collapsible>
-      <Collapsible title="Custom fonts">
-        <ThemedText>
-          Open <ThemedText type="defaultSemiBold">app/_layout.tsx</ThemedText> to see how to load{' '}
-          <ThemedText style={{ fontFamily: 'SpaceMono' }}>
-            custom fonts such as this one.
-          </ThemedText>
-        </ThemedText>
-        <ExternalLink href="https://docs.expo.dev/versions/latest/sdk/font">
-          <ThemedText type="link">Learn more</ThemedText>
-        </ExternalLink>
-      </Collapsible>
-      <Collapsible title="Light and dark mode components">
-        <ThemedText>
-          This template has light and dark mode support. The{' '}
-          <ThemedText type="defaultSemiBold">useColorScheme()</ThemedText> hook lets you inspect
-          what the user's current color scheme is, and so you can adjust UI colors accordingly.
-        </ThemedText>
-        <ExternalLink href="https://docs.expo.dev/develop/user-interface/color-themes/">
-          <ThemedText type="link">Learn more</ThemedText>
-        </ExternalLink>
-      </Collapsible>
-      <Collapsible title="Animations">
-        <ThemedText>
-          This template includes an example of an animated component. The{' '}
-          <ThemedText type="defaultSemiBold">components/HelloWave.tsx</ThemedText> component uses
-          the powerful <ThemedText type="defaultSemiBold">react-native-reanimated</ThemedText> library
-          to create a waving hand animation.
-        </ThemedText>
-        {Platform.select({
-          ios: (
-            <ThemedText>
-              The <ThemedText type="defaultSemiBold">components/ParallaxScrollView.tsx</ThemedText>{' '}
-              component provides a parallax effect for the header image.
-            </ThemedText>
-          ),
-        })}
-      </Collapsible>
-    </ParallaxScrollView>
-  );
+interface Props {
+  username: string;
+  profilePicture?: string;
 }
 
+const UserHistory: React.FC<Props> = ({ username, profilePicture }) => {
+  const [lastUsedDate, setLastUsedDate] = useState<string>(''); 
+  const [lastUsedTime, setLastUsedTime] = useState<string>(''); 
+  const navigation = useNavigation();
+
+  
+  useEffect(() => {
+    const currentDateTime = new Date();
+    const date = currentDateTime.toLocaleDateString(); 
+    const time = currentDateTime.toLocaleTimeString(); 
+    setLastUsedDate(date); 
+    setLastUsedTime(time); 
+  }, []);
+
+  const handleDetailsPress = () => {
+    // navigation.navigate('Register'); 
+  };
+  
+
+  return (
+    <View style={styles.container}>
+      <View style={styles.box}>
+        <View style={styles.profileSection}>
+          <View style={styles.profilePlaceholder}>
+            {profilePicture ? (
+              <Image source={{ uri: profilePicture }} style={styles.profileImage} />
+            ) : (
+              <Icon name="user" size={30} color="#ffffff" />
+            )}
+          </View>
+          <View style={styles.userInfo}>
+            <Text style={styles.userName}>User Name: {username}</Text>
+            {lastUsedDate && lastUsedTime ? (
+              <>
+                <View style={styles.lastUsedDateTimeContainer}>
+                  <Icon name="calendar" size={14} color="#777777" style={styles.icon} />
+                  <Text style={styles.lastUsedDate}>{lastUsedDate}</Text>
+                </View>
+                <View style={styles.lastUsedDateTimeContainer}>
+                  <Icon name="clock-o" size={14} color="#777777" style={styles.icon} />
+                  <Text style={styles.lastUsedTime}>{lastUsedTime}</Text>
+                </View>
+              </>
+            ) : (
+              <View style={styles.noHistoryContainer}>
+                <Icon name="calendar" size={30} color="#777777" style={styles.icon} />
+                <Icon name="clock-o" size={30} color="#777777" style={styles.icon} />
+              </View>
+            )}
+          </View>
+        </View>
+        <View style={styles.buttonContainer}>
+          <TouchableOpacity onPress={handleDetailsPress} style={styles.detailsButton}>
+            <Text style={styles.detailsButtonText}>Details</Text>
+          </TouchableOpacity>
+        </View>
+      </View>
+    </View>
+  );
+};
+
 const styles = StyleSheet.create({
-  headerImage: {
-    color: '#808080',
-    bottom: -90,
-    left: -35,
-    position: 'absolute',
+  container: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: '#f5f5f5',
   },
-  titleContainer: {
+  box: {
+    width: '90%',
+    backgroundColor: 'white',
+    padding: 20,
+    borderRadius: 10,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.8,
+    shadowRadius: 2,
+    elevation: 5,
+  },
+  profileSection: {
     flexDirection: 'row',
-    gap: 8,
+    alignItems: 'center',
+    marginBottom: 20,
+  },
+  profilePlaceholder: {
+    width: 50,
+    height: 50,
+    borderRadius: 25,
+    backgroundColor: '#d3d3d3', 
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginRight: 10,
+  },
+  profileImage: {
+    width: 50,
+    height: 50,
+    borderRadius: 25,
+  },
+  userInfo: {
+    flex: 1,
+  },
+  userName: {
+    fontSize: 18,
+  },
+  lastUsedDateTimeContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginTop: 5,
+  },
+  lastUsedDate: {
+    fontSize: 14,
+    color: '#777777',
+    marginLeft: 5,
+  },
+  lastUsedTime: {
+    fontSize: 14,
+    color: '#777777',
+    marginLeft: 5,
+  },
+  noHistoryContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginTop: 10,
+  },
+  icon: {
+    marginRight: 10,
+  },
+  buttonContainer: {
+    alignItems: 'center',
+    marginTop: 10,
+  },
+  detailsButton: {
+    backgroundColor: '#007bff',
+    paddingVertical: 10,
+    paddingHorizontal: 20,
+    borderRadius: 5,
+  },
+  detailsButtonText: {
+    color: '#ffffff',
+    fontSize: 16,
   },
 });
+
+export default UserHistory;
+
+

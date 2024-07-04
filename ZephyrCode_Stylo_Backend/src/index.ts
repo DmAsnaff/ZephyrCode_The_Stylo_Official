@@ -11,7 +11,7 @@ import multer from 'multer';
 import stream from 'stream'
 
 const app = express()
-const PORT = 8000
+const PORT = 5000
 
 process.env.NODE_OPTIONS = '--openssl-legacy-provider';
 
