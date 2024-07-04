@@ -140,6 +140,40 @@ export default function HomeScreen() {
       }
     };
 
+    // const handleUploadImages = async () => {
+    //   if (!frontImage || !sideImage) {
+    //     Alert.alert('Please select both images.');
+    //     return;
+    //   }
+
+    //   const formData = new FormData();
+    //   formData.append('frontImage', {
+    //     uri: frontImage,
+    //     type: 'image/jpeg',
+    //     name: 'front.jpg',
+    //   });
+    //   formData.append('sideImage', {
+    //     uri: sideImage,
+    //     type: 'image/jpeg',
+    //     name: 'side.jpg',
+    //   });
+    //   formData.append('gender', selectedGender);
+
+    //   try {
+    //     const response = await axios.post('http://your-backend-url/upload', formData, {
+    //       headers: {
+    //         'Content-Type': 'multipart/form-data',
+    //       },
+    //     });
+    //     console.log('Upload success:', response.data);
+    //     // Navigate to the hairstyle suggestion page with the results
+    //     navigation.navigate('HairstyleSuggestion', { results: response.data });
+    //   } catch (error) {
+    //     console.error('Upload error:', error);
+    //   }
+    // };
+
+
     return (
 
     <RegularScrollView>
