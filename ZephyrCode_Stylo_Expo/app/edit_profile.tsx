@@ -12,12 +12,13 @@ const EditProfile: React.FC = () => {
   const [email, setEmail] = useState('');
   const [address, setAddress] = useState('');
   const [dob, setDob] = useState('');
+  const [phoneNumber, setPhoneNumber] = useState('');
   const router = useRouter();
 
 
   const handleSubmit = () => {
     
-    const userData = { fullName, username, email, address, dob };
+    const userData = { fullName, username, email, address, dob, phoneNumber };
    
     // router.push('profile_screen', userData);
     router.push('profile_screen');
@@ -152,7 +153,18 @@ const EditProfile: React.FC = () => {
             style={styles.textInput}
           />
         </View>
-
+        <View style={styles.action}>
+          <FontAwesome name="phone" color="#05375a" size={20} />
+          <TextInput
+            placeholder="Phone Number"
+            placeholderTextColor="#666666"
+            autoCorrect={false}
+            keyboardType="phone-pad"
+            style={styles.textInput}
+            value={phoneNumber}
+            onChangeText={setPhoneNumber}
+          />
+        </View>
 
         
       </View>
