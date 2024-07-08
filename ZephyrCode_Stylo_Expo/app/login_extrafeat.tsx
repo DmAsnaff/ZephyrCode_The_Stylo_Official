@@ -34,7 +34,6 @@ export default function TabTwoScreen() {
   const handleSignIn = async() => {
 
 
-    // Replace with your actual backend API endpoint for login
     const apiUrl = '/login';
     
     try {
@@ -42,11 +41,11 @@ export default function TabTwoScreen() {
       
       console.log('Login successful:', response.data);
   
-      // Assuming your backend returns email and token
+      //  backend returns email and token
       const { email, token } = response.data;
       login(email, token); // Set user context with email and token
   
-      router.push('/(tabs)'); // Redirect to the dashboard upon successful login
+      router.push('/(tabs)'); // Redirect to the home upon successful login
     } catch (error: any) { // Specify error type explicitly as 'any' or 'unknown'
       console.error('Error logging in:', error);
       // Handle login error

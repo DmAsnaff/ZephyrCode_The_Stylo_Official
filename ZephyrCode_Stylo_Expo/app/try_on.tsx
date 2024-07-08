@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { View, Text, Image, StyleSheet, TouchableOpacity, Modal, TouchableWithoutFeedback } from 'react-native';
 import { Ionicons } from '@expo/vector-icons'; // Assuming you have Ionicons installed for icons
+import { useRouter } from 'expo-router';
 
 interface TryOnProps {
   frontImageUri: string;
@@ -15,10 +16,12 @@ const TryOn: React.FC<TryOnProps> = ({
     setShowAlert(true);
   };
 
+  const router=useRouter();
+
   const handleConfirmShare = () => {
     // Implement your share functionality here
     setShowAlert(false);
-    navigation.navigate('historypage'); 
+    router.push('./(tabs)/forum'); 
   };
 
   const handleCancelShare = () => {
