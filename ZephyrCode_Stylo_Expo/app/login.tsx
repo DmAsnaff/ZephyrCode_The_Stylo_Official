@@ -1,242 +1,99 @@
-import { StyleSheet, Image,Text,TextInput, useColorScheme } from 'react-native';
-import { ExternalLink } from '@/components/ExternalLink';
-import ParallaxScrollView from '@/components/ParallaxScrollView';
-import { ThemedText } from '@/components/ThemedText';
-import { ThemedView } from '@/components/ThemedView';
-import { Inputtextname,Colors,Buttoncolor } from '@/constants/Colors';
-import { useThemeColor } from '@/hooks/useThemeColor';
-import { TouchableOpacity } from 'react-native';
-import {Ionicons} from "@expo/vector-icons"
-import { useState } from 'react';
-import Checkbox from 'expo-checkbox';
-import Button from '@/components/buttons';
-import { Link,Stack, useRouter } from 'expo-router';
+ // app/login.tsx
 
+import React, { useState } from 'react';
+import { View, Text, TextInput, TouchableOpacity, Alert } from 'react-native';
+import { useFormik } from 'formik';
+import * as yup from 'yup';
+import { Ionicons } from '@expo/vector-icons';
+import { useRouter } from 'expo-router';
 
-export default function TabTwoScreen() {
-  const router = useRouter();  
+// Form validation schema using Yup
+const loginSchema = yup.object().shape({
+  email: yup.string().email('Invalid email').required('Email is required'),
+  password: yup.string().required('Password is required'),
+});
 
-  const textColor = useThemeColor({ light: '#11181C', dark: '#ECEDEE' }, 'text');
-  const checkcolor = useThemeColor({ light: Buttoncolor.bblue, dark: Buttoncolor.bgreen }, 'text');
+const LoginScreen: React.FC = () => {
+  const router = useRouter();
 
-  const [isPasswordShown, setIsPasswordShown] = useState(true)
-  const [isChecked, setisChecked] = useState(false)
+  const [isPasswordShown, setIsPasswordShown] = useState(false); // Initially hide password
+
+  const {
+    handleChange,
+    handleBlur,
+    handleSubmit,
+    values,
+    errors,
+    touched,
+    isValid,
+  } = useFormik({
+    initialValues: {
+      email: '',
+      password: '',
+    },
+    validationSchema: loginSchema,
+    onSubmit: async (values) => {
+      try {
+        // Simulate API call or integrate with your actual backend
+        const response = await fetch('http://your-backend-url/login', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(values),
+        });
+
+        if (!response.ok) {
+          throw new Error('Login failed');
+        }
+
+        const data = await response.json();
+        // Handle successful login, e.g., store token or navigate
+        router.push('/(tabs)');
+      } catch (error: any) {
+        console.error('Login error:', error);
+        Alert.alert('Error', error.message || 'An error occurred');
+      }
+    },
+  });
 
   return (
-    
+    <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+      <TextInput
+        placeholder="Enter your email address"
+        onChangeText={handleChange('email')}
+        onBlur={handleBlur('email')}
+        value={values.email}
+      />
+      {touched.email && errors.email && <Text>{errors.email}</Text>}
 
-    <ParallaxScrollView
-      headerBackgroundColor={{ light: '#2C3E50', dark: '#353636' }}
-      headerTitle="Welcome back,"
-      headerSubtitle='sign in to continue'>
-  
-    
-      <ThemedView style={{marginBottom:-7}}>
-        <Text style={{
-          color:textColor,
-          fontSize:16,
-          fontWeight:400,
-          marginVertical:8,
-        }}>Email Address</Text>
-
-        <ThemedView style={{
-          width:"100%",
-          height:48,
-          borderColor:Inputtextname.coolgray,
-          borderWidth:1,
-          borderRadius:8,
-          alignItems:"center",
-          justifyContent:"center",
-          paddingLeft:22          
-        }}>
-          
-          <TextInput placeholder='Enter your Email address' 
-          placeholderTextColor={Inputtextname.coolgray}
-          keyboardType='email-address'
-          style={{
-            width:"100%",
-            color: textColor,  
-          }}
+      <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+        <TextInput
+          placeholder="Enter password"
+          onChangeText={handleChange('password')}
+          onBlur={handleBlur('password')}
+          value={values.password}
+          secureTextEntry={!isPasswordShown}
+        />
+        <TouchableOpacity onPress={() => setIsPasswordShown(!isPasswordShown)}>
+          <Ionicons
+            name={isPasswordShown ? 'eye-off' : 'eye'}
+            size={24}
+            color="black"
           />
-        </ThemedView>
-      </ThemedView>
-
-
-      <ThemedView style={{marginBottom:1}}>
-        <Text style={{
-          color:textColor,
-          fontSize:16,
-          fontWeight:400,
-          marginVertical:8,
-        }}>Password</Text>
-
-        <ThemedView style={{
-          width:"100%",
-          height:48,
-          borderColor:Inputtextname.coolgray,
-          borderWidth:1,
-          borderRadius:8,
-          alignItems:"center",
-          justifyContent:"center",
-          paddingLeft:22          
-        }}>
-          
-          <TextInput placeholder='Enter password' 
-          placeholderTextColor={Inputtextname.coolgray}
-          secureTextEntry={isPasswordShown}      
-          style={{
-            width:"100%",
-            color: textColor,  
-             }}
-          />
-
-          <TouchableOpacity
-          onPress={()=>setIsPasswordShown(!isPasswordShown)}
-          style={{
-            right:12,
-            position: "absolute",
-          }}
-          >
-            {
-              isPasswordShown==true ? (
-                <Ionicons name="eye-off" size={24} color={textColor}/>
-
-              ):(
-                <Ionicons name="eye" size={24} color={textColor}/>
-              )
-            }
-          </TouchableOpacity>
-
-
-        </ThemedView>
-      </ThemedView>
-      
-      <ThemedView style={{marginBottom:1}}>
-        <Text style={{
-          color:textColor,
-          fontSize:16,
-          fontWeight:600,
-          marginVertical:1,
-          textAlign:"right",
-          paddingRight:8
-        }}>Forgot Password?</Text>
-      </ThemedView>
-
-
-      <ThemedView style={{
-        flexDirection:'row',
-        marginVertical:6
-      }}>
-
-      <Checkbox
-        style={{marginRight:8}}
-        value={isChecked}
-        onValueChange={setisChecked}
-        color={isChecked ? checkcolor : undefined}>
-      </Checkbox>
-
-      <Text style={{
-          color:textColor,
-          }}>Remember me and keep me logged in </Text>      
-                </ThemedView>
-
-      <Button
-       title="Sign Up"
-       onPress={() => router.push('/help1')} 
-         filled     
-       style={{
-       marginTop:18,
-       marginBottom:4,
-
-      }}>
-
-      </Button>
-
-      <ThemedView style={{ flexDirection:'row', alignItems:'center', marginVertical:20,}}>
-        <ThemedView 
-        style={{ 
-          flex:1,
-          height:1,
-          backgroundColor: Inputtextname.coolgray,
-          marginHorizontal:10,
-          }}/>
-
-        <Text style={{fontSize:14 , color:Inputtextname.coolgray}}>Or Sign Up with </Text>
-        <ThemedView 
-        style={{ 
-          flex:1,
-          height:1,
-          backgroundColor: Inputtextname.coolgray,
-          marginHorizontal:10,
-          }}/>
-      </ThemedView>
-
-      <ThemedView style={{
-        flexDirection: 'row',
-        justifyContent: 'center',
-      }}>
-        <TouchableOpacity
-        onPress={()=> console.log("pressed")}
-        style={{
-          alignContent:'center',
-          alignItems:'center',
-          flexDirection:'row',
-          height:52,
-          marginRight:4,
-          borderRadius:10,
-          //paddingHorizontal: 10,
-
-
-        }}
-        >
-                <Image 
-                source={require('@/assets/images/google.png')} 
-                style={{ 
-                  height:36,
-                  width:36,
-                  alignSelf:'center',
-                  marginRight:8,
-
-                }} />
-
-                <Text  style={{ 
-                color:textColor,
-                  alignItems:'center',
-                  }}>Google </Text>
         </TouchableOpacity>
-      </ThemedView>
-      <ThemedView style={{
-          flexDirection:'row',
-          justifyContent:"center",
-          marginVertical:22,
+      </View>
+      {touched.password && errors.password && <Text>{errors.password}</Text>}
 
-      }}>
-          <Text style={{
-            fontSize:16,
-            color: textColor,
-          }}>Don't have an Account?</Text>
-                <Link style={{color:textColor,fontSize:16,fontWeight:800,textDecorationLine: 'underline'}}href="/register"> SIGN UP</Link>
+      <TouchableOpacity onPress={() => handleSubmit()}>
+        <Text>Sign In</Text>
+      </TouchableOpacity>
 
-      </ThemedView>
-
-
-
-
-
-
-    </ParallaxScrollView>
+      <TouchableOpacity onPress={() => router.push('/register')}>
+        <Text>Don't have an account? Sign Up</Text>
+      </TouchableOpacity>
+    </View>
   );
-}
+};
 
-const styles = StyleSheet.create({
-  headerImage: {
-    color: '#808080',
-    bottom: -90,
-    left: -35,
-    position: 'absolute',
-  },
-  titleContainer: {
-    flexDirection: 'row',
-    gap: 8,
-  },
-});
+export default LoginScreen;
