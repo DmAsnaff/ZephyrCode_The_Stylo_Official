@@ -1,26 +1,15 @@
 import { Request, Response } from 'express'
 import { dbDisconnector, prisma } from '../prisma/database'
-import bcrypt from 'bcryptjs';
+const bcrypt = require('bcrypt');
+const jwt = require('jsonwebtoken');
+const express = require('express');
+
+const JWT_SECRET = '5EGmFYEAet6R8Cx5iuQpm736OEQFP8hOvoStHtZAEFs=';
+
 
 export const registerContoller = async (req: Request, res: Response) => {
-    // Request body from the endpoint
-//     const body = req.body
 
-//     // Create data by prisma
-//    return await prisma.user.create({
-//         data: body
-//     }).then((primaRes) => {
-//        return  res.status(201).json(primaRes)
-//     }).catch((err) => {
-//         return res.status(500).json({
-//             message: err 
-//         })
-//     }).finally(()=> {
-//         dbDisconnector()
-//     })
-// }
-
-const {userName, email, password } = req.body
+  const {userName, email, password } = req.body
 try {
     const existingUser = await prisma.user.findUnique({ where: { email: email } })
 
@@ -41,39 +30,40 @@ try {
   }
 }
 
-interface LoginRequest {
-  email: string;
-  password: string;
-}
 
-export const loginController = async (req: Request<{}, {}, LoginRequest>, res: Response) => {
+
+// Login route
+export const loginContoller = async (req: Request, res: Response) => {
   const { email, password } = req.body;
 
   try {
-    // Retrieve user from database based on email
-    const user = await prisma.user.findUnique({
-      where: {
-        email,
-      },
-    });
+    // Find user by email
+    const user = await prisma.user.findUnique({ where: { email } });
 
-    // Check if user exists
     if (!user) {
-      return res.status(401).json({ error: 'Invalid email or password' });
+      return res.status(401).json({ message: 'Invalid credentials' });
     }
 
-    // Validate password using bcrypt
-    const passwordMatch = await bcrypt.compare(password, user.password || '');
+    // // Compare hashed password
+    // const passwordMatch = await bcrypt.compare(password, user.password);
 
-    if (!passwordMatch) {
-      return res.status(401).json({ error: 'Invalid email or password' });
-    }
+    // if (!passwordMatch) {
+    //   return res.status(401).json({ message: 'Invalid credentials' });
+    // }
+      // Compare plain text password (NOT recommended)
+      if (password !== user.password) {
+        return res.status(401).json({ message: 'Invalid credentials' });
+      }
+  
 
-    // Successful login, return user data or JWT token for authentication
-    res.status(200).json({ user });
+    // Generate JWT token
+    const token = jwt.sign({ email: user.email }, JWT_SECRET, { expiresIn: '1h' });
 
+    // Return token and user info
+    res.json({ token, user: { id: user.id, email: user.email } });
   } catch (error) {
-    console.error('Error logging in:', error);
-    res.status(500).json({ error: 'An error occurred while logging in' });
+    console.error('Error during login:', error);
+    res.status(500).json({ message: 'Internal server error' });
   }
-};
+}
+

@@ -1,5 +1,5 @@
 import { Tabs } from 'expo-router';
-import React from 'react';
+import React, {useState} from 'react';
 import { DarkTheme, DefaultTheme, ThemeProvider } from '@react-navigation/native';
 import { StatusBar } from 'expo-status-bar';
 import { TabBarIcon } from '@/components/navigation/TabBarIcon';
@@ -10,13 +10,58 @@ import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { TouchableOpacity } from 'react-native';
 import {useRouter} from 'expo-router';
 import { Stack } from 'expo-router';
+import FeedbackModal from '@/popupModals/FeedbackModal';
+import axios from 'axios';
+import axiosInstance from '@/constants/axiosInstance';
 
 
 export default function TabLayout() {
+
+  const [modalVisible, setModalVisible] = useState<boolean>(false);
+  interface FeedbackData {
+    userEmail: string;
+    rating: number;
+  }
+  
+ 
+  const handleCloseModal = () => {
+    setModalVisible(false);
+  };
+
+const handleSubmitFeedback = (rating: number) => {
+  // Replace with your actual backend API endpoint URL
+  const apiUrl = '/feedback';
+
+  // Example data to send to the backend
+  const feedbackData = {
+    rating: rating,
+  };
+
+  // Example of using Axios to send a POST request
+  axiosInstance.post(apiUrl, feedbackData)
+    .then(response => {
+      console.log('Feedback submitted successfully:', response.data);
+      // Handle success, e.g., show a success message to the user
+      handleCloseModal(); // Close the modal after successful submission
+    })
+    .catch(error => {
+      console.error('Error submitting feedback:', error);
+      // Handle error, e.g., show an error message to the user
+    });
+};
+
+
+
   const colorScheme = useColorScheme();
   const router=useRouter();
 
   return (
+    <>
+    <FeedbackModal
+isVisible={modalVisible}
+onClose={handleCloseModal}
+onSubmitFeedback={handleSubmitFeedback}
+/>
     <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
     <StatusBar 
       style={colorScheme === 'dark' ? 'light' : 'light'} 
@@ -25,11 +70,14 @@ export default function TabLayout() {
     <Tabs
       screenOptions={{
         headerRight:()=>(
-          <TouchableOpacity style={{marginRight:22}} onPress={()=>router.push('../help1')}>
-          <MaterialIcons name="help-outline" size={30} color="#9CA3AF"  />
+          <TouchableOpacity style={{flexDirection:'row',marginRight:22, gap:15}} >
+          <MaterialIcons name="feedback" size={30} color="#9CA3AF"  onPress={() => setModalVisible(true)}/>
+          <MaterialIcons name="help-outline" size={30} color="#9CA3AF" onPress={()=>router.push('../help1')} />
 
           </TouchableOpacity>
+          
         ),
+        
         tabBarActiveTintColor: Colors[colorScheme ?? 'light'].tint,
         headerShown: false,
       }}>
@@ -84,5 +132,6 @@ export default function TabLayout() {
     </Stack> */}
 
     </ThemeProvider>
+    </>
   );
 }

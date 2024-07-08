@@ -21,7 +21,7 @@ const WelcomeScreen: React.FC = () => {
 
       <Button
         title="LOGIN"
-        onPress={() => router.push('/help1')}
+        onPress={() => router.push('/login')}
         filled
         style={{
           marginTop: 18,

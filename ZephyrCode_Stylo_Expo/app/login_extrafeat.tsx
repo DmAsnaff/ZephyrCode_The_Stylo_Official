@@ -15,6 +15,7 @@ import { useUserContext } from '@/constants/UserContext'; // Import UserContext
 import axios from 'axios'; // Import Axios library
 import axiosInstance from '@/constants/axiosInstance';
 
+
 export default function TabTwoScreen() {
   const router = useRouter();  
   const { login } = useUserContext(); // Use login function from UserContext
@@ -31,6 +32,7 @@ export default function TabTwoScreen() {
   });
 
   const handleSignIn = async() => {
+
 
     // Replace with your actual backend API endpoint for login
     const apiUrl = '/login';
@@ -57,6 +59,7 @@ export default function TabTwoScreen() {
       }
     }
   };
+
 
   return (
     <ParallaxScrollView
@@ -97,6 +100,7 @@ export default function TabTwoScreen() {
           />
         </ThemedView>
       </ThemedView>
+
 
       <ThemedView style={{marginBottom:1}}>
         <Text style={{
@@ -146,6 +150,7 @@ export default function TabTwoScreen() {
             }
           </TouchableOpacity>
 
+
         </ThemedView>
       </ThemedView>
       
@@ -160,12 +165,13 @@ export default function TabTwoScreen() {
         }}>Forgot Password?</Text>
       </ThemedView>
 
+
       <ThemedView style={{
         flexDirection:'row',
         marginVertical:6
       }}>
 
-      {/* <Checkbox
+      <Checkbox
         style={{marginRight:8}}
         value={isChecked}
         onValueChange={setisChecked}
@@ -174,23 +180,22 @@ export default function TabTwoScreen() {
 
       <Text style={{
           color:textColor,
-          }}>Remember me and keep me logged in </Text>       */}
-          
-    </ThemedView>
+          }}>Remember me and keep me logged in </Text>      
+                </ThemedView>
 
       <Button
        title="Login"
        onPress={handleSignIn}
        filled     
        style={{
-       marginTop:1,
+       marginTop:18,
        marginBottom:4,
 
       }}>
 
       </Button>
 
-      {/* <ThemedView style={{ flexDirection:'row', alignItems:'center', marginVertical:20,}}>
+      <ThemedView style={{ flexDirection:'row', alignItems:'center', marginVertical:20,}}>
         <ThemedView 
         style={{ 
           flex:1,
@@ -207,9 +212,9 @@ export default function TabTwoScreen() {
           backgroundColor: Inputtextname.coolgray,
           marginHorizontal:10,
           }}/>
-      </ThemedView> 
+      </ThemedView>
 
-       <ThemedView style={{
+      <ThemedView style={{
         flexDirection: 'row',
         justifyContent: 'center',
       }}>
@@ -223,6 +228,7 @@ export default function TabTwoScreen() {
           marginRight:4,
           borderRadius:10,
           //paddingHorizontal: 10,
+
 
         }}
         >
@@ -241,7 +247,7 @@ export default function TabTwoScreen() {
                   alignItems:'center',
                   }}>Google </Text>
         </TouchableOpacity>
-      </ThemedView> */}
+      </ThemedView>
       <ThemedView style={{
           flexDirection:'row',
           justifyContent:"center",
@@ -272,4 +278,3 @@ const styles = StyleSheet.create({
     gap: 8,
   },
 });
-
