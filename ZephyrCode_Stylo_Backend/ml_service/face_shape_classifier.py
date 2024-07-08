@@ -5,7 +5,7 @@ import cv2
 from tensorflow.keras.models import load_model
 import os
 
-print("Current working directory:", os.getcwd())
+
 # Load the pre-trained Xception model for face shape classification
 model_path = os.path.join(os.path.dirname(__file__), r'D:\academic\University\Year_3_Project\ZephyrCode_Project_Official\ZephyrCode_Stylo_Backend\ml_service\models\zephyrcode_model_finalxception.h5')
 model = load_model(model_path)
@@ -42,9 +42,17 @@ def classify_face(image_path):
     img_array = np.expand_dims(img_array, axis=0)
     img_array = tf.keras.applications.xception.preprocess_input(img_array)
     predictions = model.predict(img_array)
-    face_shape = np.argmax(predictions, axis=1)
-    face_shape_dict = {0: "Heart", 1: "Oblong", 2: "Oval", 3: "Round", 4: "Square"}
-    return face_shape_dict[face_shape[0]]
+
+    face_shape_class = np.argmax(predictions, axis=1)[0]
+    face_shape_dict = ['Heart', 'Oblong', 'Oval', 'Round', 'Square']
+    predicted_face_shape = face_shape_dict[face_shape_class]
+
+    # shapef = 'Square'
+    # return shapef
+    return predicted_face_shape
+    # face_shape = np.argmax(predictions, axis=1)
+    # face_shape_dict = {0: "Heart", 1: "Oblong", 2: "Oval", 3: "Round", 4: "Square"}
+    # return face_shape_dict[face_shape[0]]
 
 if __name__ == "__main__":
     import sys
