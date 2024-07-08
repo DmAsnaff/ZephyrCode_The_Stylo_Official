@@ -2,6 +2,8 @@ import React, { useState } from 'react';
 import { StyleSheet, Text, View, TouchableOpacity, StatusBar } from 'react-native';
 import DropDownPicker from 'react-native-dropdown-picker';
 import AntDesign from '@expo/vector-icons/AntDesign';
+import {useRouter} from 'expo-router';
+
 
 interface DropdownItem {
   label: string;
@@ -37,6 +39,9 @@ const Preferences: React.FC = () => {
   const [itemsDressCode, setItemsDressCode] = useState(dressCodeData);
   const [itemsHairLength, setItemsHairLength] = useState(hairLengthData);
 
+  const router=useRouter();
+
+ 
   return (
     <View style={styles.container}>
       <StatusBar barStyle="default" />
@@ -82,7 +87,7 @@ const Preferences: React.FC = () => {
           dropDownContainerStyle={{ backgroundColor: '#fafafa' }}
         />
       </View>
-      <TouchableOpacity style={styles.button}>
+      <TouchableOpacity style={styles.button} onPress={()=>{router.push('RecommendationsScreen')}}>
         <Text style={styles.buttonText}>Recommend</Text>
       </TouchableOpacity>
     </View>
@@ -127,3 +132,23 @@ const styles = StyleSheet.create({
     fontSize: 16,
   },
 });
+
+
+// mockData.
+
+
+export const sampleImageLinks = [
+  'https://firebasestorage.googleapis.com/v0/b/zephyrcode.appspot.com/o/1.jpg?alt=media&token=7c1b1803-26b4-4035-9b2a-e53605987584',
+  'https://firebasestorage.googleapis.com/v0/b/zephyrcode.appspot.com/o/2.jpg?alt=media&token=b462c590-1eed-4658-9f4a-20e8aecaaf68',
+  'https://firebasestorage.googleapis.com/v0/b/zephyrcode.appspot.com/o/3.jpg?alt=media&token=00c90c08-764c-4754-a6fd-d42f298ad976',
+  'https://firebasestorage.googleapis.com/v0/b/zephyrcode.appspot.com/o/4.jpg?alt=media&token=e4362494-433d-4424-9985-08750826d914',
+  'https://firebasestorage.googleapis.com/v0/b/zephyrcode.appspot.com/o/5.jpg?alt=media&token=b402d24b-8e9a-4fc0-bd55-1d5cd3a19a5d',
+];
+
+export const mockRecommendations = Array.from({ length: 5 }).map((_, index) => ({
+  id: index + 1,
+  imageLink: sampleImageLinks[index % sampleImageLinks.length],
+  how_to_achieve: `Step ${index + 1}: Apply styling cream, Step ${index + 2}: Blow-dry with a round brush`,
+  Products_to_achieve: `Product ${index + 1}, Product ${index + 2}`,
+  faceShape: 'Round', // Replace 'Round' with the actual value of faceShape
+}));

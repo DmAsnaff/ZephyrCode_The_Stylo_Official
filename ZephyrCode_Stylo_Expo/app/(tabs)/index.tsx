@@ -251,7 +251,7 @@ export default function HomeScreen() {
       </View>
       <TouchableOpacity
         style={styles.nextButton}
-        // onPress={() => handleCombinedPress('male')}
+        onPress={() => router.push('../select_preferences')}
       >
       <FontAwesome name="arrow-right" size={20} color="#2C3E50" />
       </TouchableOpacity>

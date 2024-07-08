@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, Image } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import Icon from 'react-native-vector-icons/FontAwesome';
+import {useRouter} from 'expo-router';
 
 interface Props {
   username: string;
@@ -12,7 +13,7 @@ const UserHistory: React.FC<Props> = ({ username, profilePicture }) => {
   const [lastUsedDate, setLastUsedDate] = useState<string>(''); 
   const [lastUsedTime, setLastUsedTime] = useState<string>(''); 
   const navigation = useNavigation();
-
+  const router=useRouter();
   
   useEffect(() => {
     const currentDateTime = new Date();
@@ -24,6 +25,7 @@ const UserHistory: React.FC<Props> = ({ username, profilePicture }) => {
 
   const handleDetailsPress = () => {
     // navigation.navigate('Register'); 
+    router.push('../DetailHistory')
   };
   
 

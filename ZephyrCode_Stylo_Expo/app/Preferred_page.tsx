@@ -1,12 +1,13 @@
 import React from 'react';
 import { View, StyleSheet, Image, Text, TouchableOpacity, ScrollView } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
+import {useRouter} from 'expo-router';
 
 const preferred_page: React.FC = () => {
   const navigation = useNavigation();
-
+ const router=useRouter();
   const goToTryOnPage = () => {
-    navigation.navigate('try_on'); 
+    router.push('try_on'); 
   };
 
   return (
