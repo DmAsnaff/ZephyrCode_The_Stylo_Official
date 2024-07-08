@@ -225,7 +225,7 @@ export default function Register() {
         marginVertical:6
       }}>
 
-      {/* <Checkbox
+      <Checkbox
         style={{marginRight:8}}
         value={isChecked}
         onValueChange={setisChecked}
@@ -245,7 +245,7 @@ export default function Register() {
           <Text style={{
           color:textColor,
           fontWeight:800,
-          }}>Privacy Policy.</Text> */}
+          }}>Privacy Policy.</Text>
 
       </ThemedView>
 
@@ -255,13 +255,13 @@ export default function Register() {
        onPress={formSubmitHandler} 
          filled     
        style={{
-       marginTop:1,
+       marginTop:18,
        marginBottom:4,
 
       }}>
 
       </Button>
-{/* 
+
       <ThemedView style={{ flexDirection:'row', alignItems:'center', marginVertical:20,}}>
         <ThemedView 
         style={{ 
@@ -314,7 +314,7 @@ export default function Register() {
                   alignItems:'center',
                   }}>Google </Text>
         </TouchableOpacity>
-      </ThemedView> */}
+      </ThemedView>
       <ThemedView style={{
           flexDirection:'row',
           justifyContent:"center",
