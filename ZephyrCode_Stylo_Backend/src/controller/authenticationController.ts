@@ -1,5 +1,6 @@
 import { Request, Response } from 'express'
 import { dbDisconnector, prisma } from '../prisma/database'
+import bcrypt from 'bcryptjs';
 
 export const registerContoller = async (req: Request, res: Response) => {
     // Request body from the endpoint
@@ -39,3 +40,40 @@ try {
     dbDisconnector()
   }
 }
+
+interface LoginRequest {
+  email: string;
+  password: string;
+}
+
+export const loginController = async (req: Request<{}, {}, LoginRequest>, res: Response) => {
+  const { email, password } = req.body;
+
+  try {
+    // Retrieve user from database based on email
+    const user = await prisma.user.findUnique({
+      where: {
+        email,
+      },
+    });
+
+    // Check if user exists
+    if (!user) {
+      return res.status(401).json({ error: 'Invalid email or password' });
+    }
+
+    // Validate password using bcrypt
+    const passwordMatch = await bcrypt.compare(password, user.password || '');
+
+    if (!passwordMatch) {
+      return res.status(401).json({ error: 'Invalid email or password' });
+    }
+
+    // Successful login, return user data or JWT token for authentication
+    res.status(200).json({ user });
+
+  } catch (error) {
+    console.error('Error logging in:', error);
+    res.status(500).json({ error: 'An error occurred while logging in' });
+  }
+};
