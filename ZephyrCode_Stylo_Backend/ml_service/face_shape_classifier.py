@@ -54,6 +54,7 @@ def classify_face(image_path):
     # face_shape_dict = {0: "Heart", 1: "Oblong", 2: "Oval", 3: "Round", 4: "Square"}
     # return face_shape_dict[face_shape[0]]
 
+
 if __name__ == "__main__":
     import sys
     image_path = sys.argv[1]
