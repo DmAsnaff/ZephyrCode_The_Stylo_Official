@@ -18,7 +18,7 @@ cascade_path = os.path.join(
 # Load the cascade classifier
 face_cascade = cv2.CascadeClassifier(cascade_path)
 
-def detect_and_crop_face(image, face_cascade, target_size=(299, 299), padding=0.25):
+def detect_and_crop_face(image, face_cascade, target_size=(299, 299), padding=0.4):
     gray_image = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
     faces = face_cascade.detectMultiScale(gray_image, scaleFactor=1.1, minNeighbors=5, minSize=(30, 30))
     if len(faces) == 0:

@@ -176,7 +176,8 @@ faceShapeResult = await new Promise<string>(async (resolve, reject) => {
 
   try {
     const results = await PythonShell.run(path.join(__dirname, '../ml_service/face_shape_classifier.py'), options);
-    resolve(results && results.length > 0 ? results[0] : '');
+    // resolve(results && results.length > 0 ? results[0] : '');
+    resolve(results && results.length > 0 ? results[2] : '');
   } catch (err) {
     reject(err);
   }
@@ -192,6 +193,7 @@ baldnessResultFront = await new Promise<string>(async (resolve, reject) => {
   try {
     const results = await PythonShell.run(path.join(__dirname, '../ml_service/baldness_detector.py'), frontOptions);
     resolve(results && results.length > 0 ? results[0] : '');
+    console.log(results[0])
   } catch (err) {
     reject(err);
   }
@@ -206,7 +208,8 @@ baldnessResultSide = await new Promise<string>(async (resolve, reject) => {
 
   try {
     const results = await PythonShell.run(path.join(__dirname, '../ml_service/baldness_detector.py'), sideOptions);
-    resolve(results && results.length > 0 ? results[0] : '');
+    resolve(results && results.length > 0 ? results[20] : '');
+    console.log(results[20])
   } catch (err) {
     reject(err);
   }
