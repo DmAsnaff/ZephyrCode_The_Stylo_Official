@@ -60,7 +60,9 @@ export const loginContoller = async (req: Request, res: Response) => {
     const token = jwt.sign({ email: user.email }, JWT_SECRET, { expiresIn: '1h' });
 
     // Return token and user info
-    res.json({ token, user: { id: user.id, email: user.email } });
+    // res.json({ token, user: { id: user.id, email: user.email, userName:user.userName } });
+    res.json({ token, id: user.id, email: user.email, userName:user.userName });
+
   } catch (error) {
     console.error('Error during login:', error);
     res.status(500).json({ message: 'Internal server error' });
