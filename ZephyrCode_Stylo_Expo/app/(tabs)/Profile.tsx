@@ -4,10 +4,37 @@ import { Title, Text } from 'react-native-paper';
 import { useNavigation } from '@react-navigation/native';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import { useRouter } from 'expo-router';
+import Button from '@/components/buttons';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import * as Random from 'expo-random';
+import { useAuthStore } from '../../store/useStore';
 
 const Profile_screen: React.FC = () => {
     const navigation = useNavigation();
     const router = useRouter();
+    const logout = useAuthStore((state) => state.logout);
+
+    // const generateJWTSecret = async () => {
+    //   try {
+    //     const randomBytes = await Random.getRandomBytesAsync(32); // Generate 32 bytes of random data
+    //     const randomBytesArray = Array.from(randomBytes); // Convert Uint8Array to number[]
+    
+    //     const jwtSecret = btoa(String.fromCharCode.apply(null, randomBytesArray)); // Convert random data to base64 string
+    //     return jwtSecret;
+    //   } catch (error) {
+    //     console.error('Error generating JWT secret:', error);
+    //     return null;
+    //   }
+    // };
+    
+    // // Example usage
+    // generateJWTSecret().then((jwtSecret) => {
+    //   if (jwtSecret) {
+    //     console.log('Generated JWT secret:', jwtSecret);
+    //   } else {
+    //     console.log('Failed to generate JWT secret');
+    //   }
+    // });
 
     useLayoutEffect(() => {
       navigation.setOptions({
@@ -22,11 +49,17 @@ const Profile_screen: React.FC = () => {
       });
     }, [navigation]);
 
-    const handleLogout = () => {
-      // Implement your logout logic here, such as clearing tokens or user data
-      console.log('Logout button pressed');
-
-      router.push('/login');
+    const handleLogout = async () => {
+      try {
+        // Clear any user data or tokens stored locally
+        // await AsyncStorage.removeItem('token'); // Replace 'token' with your actual storage key
+        logout(); 
+        // Navigate to the login screen or any other screen
+        router.replace('login'); // Replace 'Login' with your actual login screen name
+      } catch (error) {
+        console.error('Error logging out:', error);
+        Alert.alert('Logout Failed', 'Unable to logout. Please try again later.');
+      }
     };
 
     const showLogoutAlert = () => {
@@ -45,57 +78,55 @@ const Profile_screen: React.FC = () => {
       );
     };
 
-    return (
-      <SafeAreaView style={styles.container}>
-        <View style={styles.userInfoSection}>
-          <View style={{ flexDirection: 'row', marginTop: 15 }}>
-            <Image
-              source={require('@/assets/images/profile.png')}
-              style={styles.profilePic}
-              accessibilityLabel="Profile Picture"
-            />
-            <View style={{ marginLeft: 20 }}>
-              <Title style={[styles.title, { marginTop: 15, marginBottom: 5 }]}>
-                WELCOME
-              </Title>
-            </View>
+  return (
+    <SafeAreaView style={styles.container}>
+      <View style={styles.userInfoSection}>
+        <View style={{ flexDirection: 'row', marginTop: 15 }}>
+          <Image
+            source={require('@/assets/images/profile.png')}
+            style={styles.profilePic}
+            accessibilityLabel="Profile Picture"
+          />
+          <View style={{ marginLeft: 20 }}>
+            <Title style={[styles.title, { marginTop: 15, marginBottom: 5 }]}>
+              WELCOME
+            </Title>
           </View>
+        </View>
+      </View>
+
+      <View style={styles.userInfoSection}>
+        <View style={styles.row}>
+          <Icon name="account" color="#777777" size={20} />
+          <Text style={styles.label}>Name:</Text>
+          
+        </View>
+        <View style={styles.row}>
+          <Icon name="account" color="#777777" size={20} />
+          <Text style={styles.label}>User Name:</Text>
+          
         </View>
 
-        <View style={styles.userInfoSection}>
-          <View style={styles.row}>
-            <Icon name="account" color="#777777" size={20} />
-            <Text style={styles.label}>Name:</Text>
-          </View>
-          <View style={styles.row}>
-            <Icon name="account" color="#777777" size={20} />
-            <Text style={styles.label}>User Name:</Text>
-          </View>
-          <View style={styles.row}>
-            <Icon name="email" color="#777777" size={20} />
-            <Text style={styles.label}>Email:</Text>
-          </View>
-          <View style={styles.row}>
-            <Icon name="map-marker-radius" color="#777777" size={20} />
-            <Text style={styles.label}>Address:</Text>
-          </View>
-          <View style={styles.row}>
-            <Icon name="calendar" color="#777777" size={20} />
-            <Text style={styles.label}>Date of Birth:</Text>
-          </View>
-          <View style={styles.row}>
-            <Icon name="phone" color="#777777" size={20} />
-            <Text style={styles.label}>Phone Number:</Text>
-          </View>
+        <View style={styles.row}>
+          <Icon name="email" color="#777777" size={20} />
+          <Text style={styles.label}>Email:</Text>
+          
         </View>
-
-        <View style={styles.logoutButtonContainer}>
-          <TouchableOpacity style={styles.logoutButton} onPress={showLogoutAlert}>
-            <Text style={styles.logoutButtonText}>Logout</Text>
-          </TouchableOpacity>
+        <View style={styles.row}>
+          <Icon name="map-marker-radius" color="#777777" size={20} />
+          <Text style={styles.label}>Address:</Text>
+          
         </View>
-      </SafeAreaView>
-    );
+        <View style={styles.row}>
+          <Icon name="calendar" color="#777777" size={20} />
+          <Text style={styles.label}>Date of Birth:</Text>
+        </View>
+        <View style={{alignItems:'center', paddingTop:70,}}>
+        <Button style={{backgroundColor:'#16A085', borderColor:'#16A085',}}title="Logout" onPress={showLogoutAlert} />
+        </View>
+      </View>
+    </SafeAreaView>
+  );
 };
 
 export default Profile_screen;
@@ -103,7 +134,7 @@ export default Profile_screen;
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    paddingTop: 60,
+    paddingTop:60
   },
   userInfoSection: {
     paddingHorizontal: 30,
@@ -128,21 +159,12 @@ const styles = StyleSheet.create({
     marginLeft: 20,
     fontWeight: 'bold',
   },
-  logoutButtonContainer: {
-    flex: 1,
-    justifyContent: 'flex-end',
-    alignItems: 'center',
-    marginBottom: 30,
-  },
-  logoutButton: {
-    backgroundColor: '#16A085',
-    paddingVertical: 10,
-    paddingHorizontal: 20,
-    borderRadius: 10,
-  },
-  logoutButtonText: {
-    color: 'white',
-    fontSize: 16,
-    fontWeight: 'bold',
+  value: {
+    color: '#777777',
+    marginLeft: 5,
   },
 });
+
+
+
+

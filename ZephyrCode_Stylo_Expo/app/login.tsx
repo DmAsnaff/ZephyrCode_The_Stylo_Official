@@ -11,8 +11,9 @@ import { useState } from 'react';
 import Checkbox from 'expo-checkbox';
 import Button from '@/components/buttons';
 import { Link,Stack, useRouter } from 'expo-router';
-import { useUserContext } from '@/constants/UserContext'; // Import UserContext
-import axios from 'axios'; // Import Axios library
+// import { useUserContext } from '@/constants/UserContext'; // Import UserContext
+import { useAuthStore } from '@/store/useStore'; 
+import axios from 'axios'; 
 import axiosInstance from '@/constants/axiosInstance';
 import { useFormik } from 'formik';
 import * as Yup from 'yup';
@@ -24,7 +25,8 @@ const LoginSchema = Yup.object().shape({
 
 export default function TabTwoScreen() {
   const router = useRouter();
-  const { login } = useUserContext(); // Use login function from UserContext
+  // const { login } = useUserContext(); // Use login function from UserContext
+  const login = useAuthStore((state) => state.login); //im taking this from zustand not usecontext
   const textColor = useThemeColor({ light: '#11181C', dark: '#ECEDEE' }, 'text');
   const checkcolor = useThemeColor({ light: Buttoncolor.bblue, dark: Buttoncolor.bgreen }, 'text');
   
@@ -41,9 +43,11 @@ export default function TabTwoScreen() {
       try {
         const response = await axiosInstance.post(apiUrl, values);
         console.log('Login successful:', response.data);
-        const { email, token } = response.data;
-        login(email, token); // Set user context with email and token
-        router.push('/(tabs)'); // Redirect to the dashboard upon successful login
+        // const { email, token } = response.data;
+        // login(email, token); // Set user context with email and token
+        const { email, token, userName } = response.data;
+        login(token, email, userName);
+        router.replace('/(tabs)'); // Redirect to the dashboard upon successful login
       } catch (error: any) {
         console.error('Error logging in:', error);
         if (axios.isAxiosError(error)) {

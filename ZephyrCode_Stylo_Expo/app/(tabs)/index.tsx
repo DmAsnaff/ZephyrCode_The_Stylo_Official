@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { View, SafeAreaView, StyleSheet, Image, TouchableOpacity, Text, Alert } from 'react-native';
 import { FontAwesome } from '@expo/vector-icons';
 import * as ImagePicker from 'expo-image-picker';
@@ -6,6 +6,7 @@ import { useNavigation } from '@react-navigation/native';
 import {useRouter} from 'expo-router';
 import RegularScrollView from '@/components/RegularScrollView';
 import axios from 'axios';
+import { useAuthStore } from '../../store/useStore';
 
 type Gender = 'male' | 'female' | null;
 
@@ -23,8 +24,14 @@ export default function HomeScreen() {
     const [showBodyOptions, setShowBodyOptions] = useState(false);
 
 
-
-
+    const email = useAuthStore((state) => state.email);
+    const username = useAuthStore((state) => state.userName);
+    const token = useAuthStore((state) => state.token);
+    const logout = useAuthStore((state) => state.logout);
+ 
+    if (!token) {
+      return <Text>Please log in</Text>;
+    }
     
     const handleCameraIconPressFront = () => {
       setShowOptionsFront(!showOptionsFront);
@@ -173,7 +180,6 @@ export default function HomeScreen() {
     //   }
     // };
 
-
     return (
 
     <RegularScrollView>
@@ -194,7 +200,8 @@ export default function HomeScreen() {
         <Text style={styles.buttonText}>Female</Text>
       </TouchableOpacity>
       </View>
-
+      <Text>Welcome, {username}!</Text>
+      <Text>Your email: {email}</Text>
       {showBodyOptions && (
       <View style={{alignItems:'center'}}>
           <View style={{flexDirection: 'row', gap:35, paddingTop: 80,}}>
