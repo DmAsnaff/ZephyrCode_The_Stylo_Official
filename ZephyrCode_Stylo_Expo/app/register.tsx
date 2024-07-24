@@ -8,6 +8,7 @@ import {Ionicons} from "@expo/vector-icons"
 import React,{ useState } from 'react';
 import Checkbox from 'expo-checkbox';
 import Button from '@/components/buttons';
+import ButtonSecondary from '@/components/buttonSecondary';
 import { Link, useRouter } from 'expo-router';
 import axiosInstance from '@/constants/axiosInstance';
 import { Formik, FormikProps } from 'formik'; // Import Formik and FormikProps
@@ -33,6 +34,7 @@ export default function Register() {
   const checkcolor = useThemeColor({ light: Buttoncolor.bblue, dark: Buttoncolor.bgreen }, 'text');
 
   const [isPasswordShown, setIsPasswordShown] = React.useState(true);
+  const [showSuccessMessage, setShowSuccessMessage] = useState(false); // State for success message
 
   const initialValues: FormValues = {
     userName: '',
@@ -46,7 +48,11 @@ export default function Register() {
         .then(res => {
           console.log('User registered successfully');
           if (res.status === 201) {
-            router.push('/login');
+            setShowSuccessMessage(true); // Show success message
+            setTimeout(() => {
+              setShowSuccessMessage(false); // Hide success message after a delay
+              router.replace('/login');
+            }, 2000);
           }
         })
         .catch(error => {
@@ -201,6 +207,7 @@ export default function Register() {
             }
           </ThemedView>
 
+          <ThemedView style={{alignItems:'center'}}>
           <Button
             title="SIGN UP"
             onPress={formikProps.handleSubmit} // Use handleSubmit from formikProps
@@ -210,7 +217,8 @@ export default function Register() {
               marginBottom: 4,
             }}
           />
-
+          </ThemedView>
+          
           <ThemedView style={{
             flexDirection: 'row',
             justifyContent: "center",
@@ -220,8 +228,17 @@ export default function Register() {
               fontSize: 16,
               color: textColor,
             }}>Already have an Account?</Text>
-            <Link style={{ color: textColor, fontSize: 16, fontWeight: 800, textDecorationLine: 'underline' }} href="/login"> Sign In</Link>
+            <Link style={{ color: "#16A085", fontSize: 16, fontWeight: 800, textDecorationLine: 'underline' }} href="/login"> LOGIN</Link>
           </ThemedView>
+          {showSuccessMessage && (
+            <ThemedView style={{alignItems: 'center'}}>
+            <ThemedView style={{backgroundColor:'#f7f7f7', borderRadius:30, justifyContent: 'center', width:350,alignItems: 'center', paddingVertical: 4, }}>
+            <Text style={{ color: '#16A085', fontSize: 16, textAlign: 'center', alignItems:"center" , opacity:1}}>
+              Registration successful! Redirecting to login...
+            </Text>
+            </ThemedView>
+            </ThemedView>
+          )}
         </ParallaxScrollView>
       )}
     </Formik>

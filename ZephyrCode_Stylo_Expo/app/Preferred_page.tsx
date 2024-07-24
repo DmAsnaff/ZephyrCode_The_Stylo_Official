@@ -2,6 +2,8 @@ import React from 'react';
 import { View, StyleSheet, Image, Text, TouchableOpacity, ScrollView } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import {useRouter} from 'expo-router';
+import ButtonSecondary from '@/components/buttonSecondary';
+
 
 const preferred_page: React.FC = () => {
   const navigation = useNavigation();
@@ -18,22 +20,30 @@ const preferred_page: React.FC = () => {
       />
        <Text style={[styles.requirementsText, { color: '#2F4F4F' }]}>VERBAL EXPLANATION</Text>
       <View style={styles.textBox}>
-        <ScrollView contentContainerStyle={{ flexGrow: 1 }}>
-          <Text style={[styles.textBoxContent, { color: '#2F4F4F' }]}>
-            This is the verbal explanation.
-          </Text>
-        </ScrollView>
+      <ScrollView
+  contentContainerStyle={{
+    flexGrow: 1,
+    alignItems: 'center',
+    justifyContent: 'center',
+    width: 300,
+    height: '100%', // Ensure the ScrollView takes full height of its container
+  }}
+>
+  <Text style={[styles.textBoxContent, { color: '#2F4F4F', textAlign: 'center' }]}>
+    This is the verbal explanation.
+  </Text>
+</ScrollView>
       </View>
       <View style={styles.additionalBox}>
         <Text style={[styles.requirementsText, { color: '#2F4F4F' }]}>PRODUCT REQUIREMENT</Text>
         <View style={styles.textBoxBelow}>
-          <ScrollView contentContainerStyle={{ flexGrow: 1 }}>
-            <Text style={[styles.textBoxContent, { color: '#2F4F4F' }]}>
+          <ScrollView contentContainerStyle={{ flexGrow: 1, width:300, alignItems:'center' , justifyContent: 'center',height: '100%'}}>
+            <Text style={[styles.textBoxContent, { color: '#2F4F4F',  textAlign: 'center' }]}>
                "product requirements".
             </Text>
           </ScrollView>
         </View>
-        <TouchableOpacity style={styles.button} onPress={goToTryOnPage}>
+        <TouchableOpacity style={[styles.button, {marginTop:40}]} onPress={goToTryOnPage}>
           <Text style={styles.buttonText}>Try On</Text>
         </TouchableOpacity>
       </View>
@@ -88,12 +98,19 @@ const styles = StyleSheet.create({
     marginTop: 10,
   },
   button: {
-    marginTop: 20,
-    backgroundColor: '#16A085',
+    paddingHorizontal: 16,
     paddingVertical: 10,
-    paddingHorizontal: 20,
-    borderRadius: 8,
+    borderWidth: 2,
+    borderColor:"#16A085",
+    backgroundColor:"#16A085",
+    borderRadius: 4,
+    alignItems: 'center',
+    justifyContent: 'center',
+    width: 350, // Width to match the image
+    marginTop: 18, // Spacing similar to the image
+    marginBottom: 4,
   },
+
   buttonText: {
     fontSize: 16,
     color: '#fff',

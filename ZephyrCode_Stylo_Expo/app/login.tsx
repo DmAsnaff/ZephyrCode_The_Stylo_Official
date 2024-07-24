@@ -10,6 +10,7 @@ import {Ionicons} from "@expo/vector-icons"
 import { useState } from 'react';
 import Checkbox from 'expo-checkbox';
 import Button from '@/components/buttons';
+import ButtonSecondary from '@/components/buttonSecondary';
 import { Link,Stack, useRouter } from 'expo-router';
 // import { useUserContext } from '@/constants/UserContext'; // Import UserContext
 import { useAuthStore } from '@/store/useStore'; 
@@ -31,6 +32,7 @@ export default function TabTwoScreen() {
   const checkcolor = useThemeColor({ light: Buttoncolor.bblue, dark: Buttoncolor.bgreen }, 'text');
   
   const [isPasswordShown, setIsPasswordShown] = useState(true);
+  const [showSuccessMessage, setShowSuccessMessage] = useState(false); // State for success message
 
   const formik = useFormik({
     initialValues: {
@@ -47,7 +49,7 @@ export default function TabTwoScreen() {
         // login(email, token); // Set user context with email and token
         const { email, token, userName } = response.data;
         login(token, email, userName);
-        router.replace('/(tabs)'); // Redirect to the dashboard upon successful login
+        router.replace('/help1'); // Redirect to the dashboard upon successful login
       } catch (error: any) {
         console.error('Error logging in:', error);
         if (axios.isAxiosError(error)) {
@@ -150,15 +152,21 @@ export default function TabTwoScreen() {
         </Text>
       </ThemedView>
 
-      <Button title="Login" onPress={formik.handleSubmit as any} filled style={{ marginTop: 1, marginBottom: 4 }} />
-
+      <ThemedView style={{alignItems:'center'}}>
+         <Button title="LOGIN" onPress={formik.handleSubmit as any} filled style={{ marginTop: 1, marginBottom: 4, alignContent:'center' }} />
+      </ThemedView>
       <ThemedView style={{ flexDirection: 'row', justifyContent: 'center', marginVertical: 22 }}>
         <Text style={{ fontSize: 16, color: textColor }}>Don't have an Account?</Text>
-        <Link style={{ color: textColor, fontSize: 16, fontWeight: '800', textDecorationLine: 'underline' }} href="/register">
+        <Link style={{ color: "#16A085", fontSize: 16, fontWeight: '800', textDecorationLine: 'underline' }} href="/register">
           {' '}
           SIGN UP
         </Link>
       </ThemedView>
+      {showSuccessMessage && (
+            <Text style={{ color: '#16A085', fontSize: 16, textAlign: 'center', marginTop: 10 }}>
+              Registration successful! Redirecting to login...
+            </Text>
+          )}
     </ParallaxScrollView>
   );
 }
