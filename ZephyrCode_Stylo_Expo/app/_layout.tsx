@@ -87,7 +87,7 @@ export default function RootLayout() {
       {/* {isAuthLoaded && (
         token === null ? <Redirect href="/" /> : <Redirect href="/(tabs)" />
       )} */}
-        {isAuthLoaded && token !== null && <Redirect href="/(tabs)" />}
+        {isAuthLoaded && token !== null && <Redirect href="/help1" />}
     </ThemeProvider>
   );
 }

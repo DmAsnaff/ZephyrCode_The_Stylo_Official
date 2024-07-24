@@ -35,7 +35,7 @@ const TryOn: React.FC<TryOnProps> = ({
         <Text style={styles.arrowMark}>⬇</Text>
         <Image style={styles.imagePlaceholder} source={{ uri: frontImageUri }} />
         <TouchableOpacity
-          style={styles.buttonContainer}
+          style={[styles.buttonContainer, {marginTop:40}]}
           onPress={handleSharePress}
           activeOpacity={0.7}
         >

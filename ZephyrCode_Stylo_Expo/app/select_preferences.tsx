@@ -45,7 +45,7 @@ const Preferences: React.FC = () => {
   return (
     <View style={styles.container}>
       <StatusBar barStyle="default" />
-      <View style={[styles.dropdownContainer, openAgeRange && { zIndex: 3000, elevation: 3 }]}>
+      <View style={[styles.dropdownContainer, { zIndex: 3000, elevation: 1 }]}>
         <Text style={styles.label}>Age Range</Text>
         <DropDownPicker
           open={openAgeRange}
@@ -59,7 +59,7 @@ const Preferences: React.FC = () => {
           dropDownContainerStyle={{ backgroundColor: '#fafafa' }}
         />
       </View>
-      <View style={[styles.dropdownContainer, openDressCode && { zIndex: 2000, elevation: 2 }]}>
+      <View style={[styles.dropdownContainer, { zIndex: 2000, elevation: 2 }]}>
         <Text style={styles.label}>Dress Code</Text>
         <DropDownPicker
           open={openDressCode}
@@ -73,7 +73,7 @@ const Preferences: React.FC = () => {
           dropDownContainerStyle={{ backgroundColor: '#fafafa' }}
         />
       </View>
-      <View style={[styles.dropdownContainer, openHairLength && { zIndex: 1000, elevation: 1 }]}>
+      <View style={[styles.dropdownContainer, { zIndex: 1000, elevation: 3 }]}>
         <Text style={styles.label}>Hair Length</Text>
         <DropDownPicker
           open={openHairLength}

@@ -17,8 +17,10 @@ try {
       return res.status(400).json({ error: 'Email already exists' })
     }
 
+    const hashedPasword= await bcrypt.hash(password, 10);
+
     const newUser = await prisma.user.create({
-      data: {userName,email,password  }
+      data: {userName,email,password:hashedPasword  }
     })
 
     res.status(201).json(newUser)
@@ -45,15 +47,14 @@ export const loginContoller = async (req: Request, res: Response) => {
     }
 
     // // Compare hashed password
-    // const passwordMatch = await bcrypt.compare(password, user.password);
+    const passwordMatch = await bcrypt.compare(password, user.password);
 
-    // if (!passwordMatch) {
-    //   return res.status(401).json({ message: 'Invalid credentials' });
-    // }
-      // Compare plain text password (NOT recommended)
-      if (password !== user.password) {
-        return res.status(401).json({ message: 'Invalid credentials' });
-      }
+    if (!passwordMatch) {
+      return res.status(401).json({ message: 'Invalid credentials' });
+    }
+      // if (password !== user.password) {
+      //   return res.status(401).json({ message: 'Invalid credentials' });
+      // }
   
 
     // Generate JWT token
