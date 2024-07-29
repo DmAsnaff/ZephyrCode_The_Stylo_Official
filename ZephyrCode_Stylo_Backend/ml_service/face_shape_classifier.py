@@ -31,6 +31,28 @@ def detect_and_crop_face(image, face_cascade, target_size=(299, 299), padding=0.
     face = image[y1:y2, x1:x2]
     return cv2.resize(face, target_size)
 
+def apply_color_jitter(image, brightness=0.2, contrast=0.2):
+    # Convert image to float and normalize to [0, 1]
+    image = image.astype(np.float32) / 255.0
+    
+    # Apply brightness adjustment
+    image = image + brightness
+    image = np.clip(image, 0, 1)
+    
+    # Apply contrast adjustment
+    mean = np.mean(image)
+    image = (image - mean) * (1 + contrast) + mean
+    image = np.clip(image, 0, 1)
+    
+    # Convert back to [0, 255]
+    image = (image * 255).astype(np.uint8)
+    
+    return image
+
+def apply_noise_reduction(image, kernel_size=5):
+    # Apply Gaussian blur for noise reduction
+    return cv2.GaussianBlur(image, (kernel_size, kernel_size), 0)
+
 def classify_face(image_path):
     image = cv2.imread(image_path)
     if image is None:
@@ -38,7 +60,13 @@ def classify_face(image_path):
     cropped_face = detect_and_crop_face(image, face_cascade)
     if cropped_face is None:
         return "No face detected"
-    img_array = tf.keras.preprocessing.image.img_to_array(cropped_face)
+     # Apply color jittering
+    jittered_face = apply_color_jitter(cropped_face)
+    
+    # Apply noise reduction
+    denoised_face = apply_noise_reduction(jittered_face)
+
+    img_array = tf.keras.preprocessing.image.img_to_array(denoised_face)
     img_array = np.expand_dims(img_array, axis=0)
     img_array = tf.keras.applications.xception.preprocess_input(img_array)
     predictions = model.predict(img_array)

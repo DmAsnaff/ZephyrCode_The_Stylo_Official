@@ -138,6 +138,7 @@ export default function TabTwoScreen() {
       </ThemedView>
 
       <ThemedView style={{ marginBottom: 1 }}>
+       <TouchableOpacity onPress={()=>router.push('/ForgotPasswordScreen')}>
         <Text
           style={{
             color: textColor,
@@ -150,6 +151,7 @@ export default function TabTwoScreen() {
         >
           Forgot Password?
         </Text>
+        </TouchableOpacity>
       </ThemedView>
 
       <ThemedView style={{alignItems:'center'}}>
