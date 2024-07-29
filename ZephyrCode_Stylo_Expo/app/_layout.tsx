@@ -83,6 +83,8 @@ export default function RootLayout() {
         <Stack.Screen name="try_on"options={{ title:'Try-On',headerShown: true, headerStyle:{backgroundColor:'#2C3E50'},  headerTintColor: '#FFFFFF'  }}/>
         <Stack.Screen name="Preferred_page"options={{ title:'PREFERRED_HAIRSTYLE',headerShown: true, headerStyle:{backgroundColor:'#2C3E50'},  headerTintColor: '#FFFFFF'  }}/>
         <Stack.Screen name="edit_profile"options={{ title:'Profile',headerShown: true,   }}/>
+        <Stack.Screen name="ForgotPasswordScreen" options={{title: 'ForgotPasswordScreen' ,headerShown: false, headerStyle:{backgroundColor:'#fff'} }}/>
+        <Stack.Screen name="ResetPasswordScreen" options={{title: 'ResetPasswordScreen' ,headerShown: false, headerStyle:{backgroundColor:'#fff'} }}/>
       </Stack>
       {/* {isAuthLoaded && (
         token === null ? <Redirect href="/" /> : <Redirect href="/(tabs)" />

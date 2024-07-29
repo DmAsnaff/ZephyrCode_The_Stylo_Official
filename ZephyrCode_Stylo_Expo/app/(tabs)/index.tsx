@@ -200,8 +200,7 @@ export default function HomeScreen() {
         <Text style={styles.buttonText}>Female</Text>
       </TouchableOpacity>
       </View>
-      <Text>Welcome, {username}!</Text>
-      <Text>Your email: {email}</Text>
+
       {showBodyOptions && (
       <View style={{alignItems:'center'}}>
           <View style={{flexDirection: 'row', gap:35, paddingTop: 80,}}>

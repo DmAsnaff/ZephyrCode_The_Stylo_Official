@@ -13,6 +13,8 @@ import { Link, useRouter } from 'expo-router';
 import axiosInstance from '@/constants/axiosInstance';
 import { Formik, FormikProps } from 'formik'; // Import Formik and FormikProps
 import * as yup from 'yup';
+import { Alert } from 'react-native';
+
 
 // Define the shape of your form values
 interface FormValues {
@@ -57,8 +59,23 @@ export default function Register() {
         })
         .catch(error => {
           console.error('An unexpected error occurred!', error);
-          if (error.response && error.response.status === 400) {
-            console.error('Email already exists');
+          if (error.response && error.response.status === 400)  {
+            Alert.alert(
+              'Registration Failed',
+              'Email already exists. Do you want to log in instead?',
+              [
+                {
+                  text: 'Cancel',
+                  onPress: () => console.log('Cancel Pressed'),
+                  style: 'cancel',
+                },
+                {
+                  text: 'Login',
+                  onPress: () => router.push('/login'),
+                },
+              ],
+              { cancelable: false }
+            );
           }
         });
 
