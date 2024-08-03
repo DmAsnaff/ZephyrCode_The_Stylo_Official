@@ -39,7 +39,16 @@ try {
     }
   });
   
-  res.status(201).json({ message: 'Feedback submitted successfully', feedback });
+      // Calculate average rating
+      const averageRatingResult = await prisma.feedback.aggregate({
+        _avg: {
+          rating: true
+        }
+      });
+
+      const averageRating = averageRatingResult._avg.rating;
+
+  res.status(201).json({ message: 'Feedback submitted successfully', feedback, averageRating });
 } catch (error) {
   console.error('Error submitting feedback:', error);
   res.status(500).json({ error: 'Internal server error' });

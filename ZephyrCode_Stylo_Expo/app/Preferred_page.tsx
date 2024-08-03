@@ -16,7 +16,7 @@ const preferred_page: React.FC = () => {
     <View style={styles.container}>
       <Image
         style={styles.imagePlaceholder}
-        source={{ uri: 'https://via.placeholder.com/150' }} 
+        source={{ uri: 'https://images.filmibeat.com/img/popcorn/profile_photos/shahid-kapoor-20190619173815-177.jpg' }} 
       />
        <Text style={[styles.requirementsText, { color: '#2F4F4F' }]}>VERBAL EXPLANATION</Text>
       <View style={styles.textBox}>

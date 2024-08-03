@@ -13,9 +13,12 @@ import { Stack } from 'expo-router';
 import FeedbackModal from '@/popupModals/FeedbackModal';
 import axios from 'axios';
 import axiosInstance from '@/constants/axiosInstance';
+import { useAuthStore } from '../../store/useStore';
 
 
 export default function TabLayout() {
+
+  const email = useAuthStore((state) => state.email);
 
   const [modalVisible, setModalVisible] = useState<boolean>(false);
   interface FeedbackData {
@@ -35,6 +38,7 @@ const handleSubmitFeedback = (rating: number) => {
   // Example data to send to the backend
   const feedbackData = {
     rating: rating,
+    email: email,
   };
 
   // Example of using Axios to send a POST request
