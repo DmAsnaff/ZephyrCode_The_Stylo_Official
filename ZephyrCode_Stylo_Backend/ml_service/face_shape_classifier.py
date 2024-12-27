@@ -29,6 +29,7 @@ def detect_and_crop_face(image, face_cascade, target_size=(299, 299), padding=0.
     x1, y1 = max(0, x - pad_w), max(0, y - pad_h)
     x2, y2 = min(image.shape[1], x + w + pad_w), min(image.shape[0], y + h + pad_h)
     face = image[y1:y2, x1:x2]
+    
     return cv2.resize(face, target_size)
 
 def apply_color_jitter(image, brightness=0.2, contrast=0.2):
@@ -48,7 +49,8 @@ def apply_color_jitter(image, brightness=0.2, contrast=0.2):
     image = (image * 255).astype(np.uint8)
     
     return image
-
+  # face_resized_cropped= cv2.resize(face, target_size)
+ # cv2.imwrite(r"C:\Users\ASUS\Desktop\pircut.jpg", face_resized_cropped)
 def apply_noise_reduction(image, kernel_size=5):
     # Apply Gaussian blur for noise reduction
     return cv2.GaussianBlur(image, (kernel_size, kernel_size), 0)

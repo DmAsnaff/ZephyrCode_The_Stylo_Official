@@ -66,7 +66,6 @@ def detect_and_crop_face_side(image_path):
 
         # Crop the extended head region
         head_crop = image[y_ext:y_ext+height_ext, x_ext:x_ext+width_ext]
-        
         return head_crop  # Return the cropped head region
 
 

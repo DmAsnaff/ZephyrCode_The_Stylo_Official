@@ -185,7 +185,7 @@ export default function HomeScreen() {
     <RegularScrollView>
     <SafeAreaView style={styles.container}>
       <View style={styles.genderContainer}>
-    
+    {/* <Text>{username}</Text> */}
       <TouchableOpacity
         style={[styles.button, selectedGender === 'male' && styles.selected]}
         onPress={() => handleCombinedPress('male')}
