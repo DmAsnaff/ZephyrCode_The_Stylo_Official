@@ -72,6 +72,7 @@ model UserHistory {
 }
 
 
+
 model SocialForumPost {
   PostID      Int     @id @default(autoincrement())              // Primary key
   email       String   // Foreign key referencing User
