@@ -34,8 +34,8 @@ const EditProfile: React.FC = () => {
         });
         // setProfilePicture(response.data.profilePicture || null);
       } catch (error) {
-        console.error('Error fetching user details:', error);
-        Alert.alert('Error', 'Failed to load user details.');
+        // console.error('Error fetching user details:', error);
+        // Alert.alert('Error', 'Failed to load user details.');
       }
     };
 

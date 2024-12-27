@@ -295,28 +295,28 @@ baldnessResultSide = await new Promise<string>(async (resolve, reject) => {
 
 
 
-  app.get('/user-history', async (req, res) => {
-    const { email } = req.body; // Retrieve the email from the query parameters
+  // app.get('/user-history', async (req, res) => {
+  //   const { email } = req.body; // Retrieve the email from the query parameters
   
-    if (!email) {
-      return res.status(400).json({ error: 'Email is required' });
-    }
+  //   if (!email) {
+  //     return res.status(400).json({ error: 'Email is required' });
+  //   }
   
-    try {
-      const userHistory = await prisma.userHistory.findMany({
-        where: { email: email },
-      });
+  //   try {
+  //     const userHistory = await prisma.userHistory.findMany({
+  //       where: { email: email },
+  //     });
   
-      if (userHistory.length === 0) {
-        return res.status(404).json({ error: 'No history found for this email' });
-      }
+  //     if (userHistory.length === 0) {
+  //       return res.status(404).json({ error: 'No history found for this email' });
+  //     }
   
-      return res.status(200).json(userHistory);
-    } catch (error) {
-      console.error('Error retrieving user history:', error);
-      return res.status(500).json({ error: 'Internal server error' });
-    }
-  });
+  //     return res.status(200).json(userHistory);
+  //   } catch (error) {
+  //     console.error('Error retrieving user history:', error);
+  //     return res.status(500).json({ error: 'Internal server error' });
+  //   }
+  // });
 
 
 
