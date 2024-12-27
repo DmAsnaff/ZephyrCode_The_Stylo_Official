@@ -1,118 +1,93 @@
 import React from 'react';
-import { View, Text, Image, StyleSheet } from 'react-native';
-import Icon from 'react-native-vector-icons/FontAwesome';
+import { View, Text, Image, StyleSheet, ScrollView, useColorScheme  } from 'react-native';
+import { useRoute } from '@react-navigation/native'; // Import useRoute hook
+import { RouteProp } from '@react-navigation/native'; // Import RouteProp for typing
+import { RootStackParamList } from '../components/navigation/historynavigation'; // Adjust path if needed
 
-interface DetailHistoryProps {
-  dressCode: string;
-  hairLength: string;
-  ageRange: string;
-  frontImageUri: string;  
-  sideImageUri: string; 
-  selectedHairstyleUri: string;
-  sharedImageUri: string; 
-  thumbsUpCount: number;  
-  thumbsDownCount: number; 
-}
+const DetailHistory: React.FC = () => {
+  // Use the useRoute hook to get the route object
+  const route = useRoute<RouteProp<RootStackParamList, 'DetailHistory'>>(); 
+  const { item } = route.params; // Destructure item from route.params
+  const colorScheme = useColorScheme(); // Get the current theme (light or dark)
 
-const DetailHistory: React.FC<DetailHistoryProps> = ({
-  dressCode,
-  hairLength,
-  ageRange,
-  frontImageUri,
-  sideImageUri,
-  selectedHairstyleUri,
-  sharedImageUri,
-  thumbsUpCount,
-  thumbsDownCount,
-}) => {
+
+  
+
+  // Define placeholder image for missing data
+  const placeholderImage = 'https://via.placeholder.com/150'; 
+
+  // Use the transferred image or fallback to placeholder image
+  const hairstyleImage = item.hairstyle_transferred_image_link || placeholderImage;
+
+  const textColor = colorScheme === 'dark' ? '#fff' : '#000';
+
+
   return (
-    <View style={styles.container}>
-      <Text style={[styles.text, { color: '#2C3E50' }]}>Front/Side Image:</Text>
-      <View style={styles.imageContainer}>
-        <Image style={styles.imagePlaceholder} source={{ uri: 'frontImageUri' }} />
-        <Image style={styles.imagePlaceholder} source={{ uri: 'sideImageUri' }} />
+    <ScrollView contentContainerStyle={styles.container}> 
+     <Text style={[styles.details, { color: textColor }]}>History ID: <Text style={[{ color: "red" }]}>{item.id}</Text></Text>
+      <Text style={[styles.details, { color: textColor }]}>Font & Side Images:</Text>
+
+
+      {/* Display front and side images with updated style */}
+      <View style={styles.imageRow}>
+        <Image source={{ uri: item.front_image_link }} style={styles.image} />
+        {item.side_image_link && (
+          <Image source={{ uri: item.side_image_link }} style={styles.image} />
+        )}
       </View>
-      <Text style={[styles.label, { color: '#2C3E50' }]}>Dress Code: <Text style={styles.value}>{dressCode}</Text></Text>
-      <Text style={[styles.label, { color: '#2C3E50' }]}>Hair Length: <Text style={styles.value}>{hairLength}</Text></Text>
-      <Text style={[styles.label, { color: '#2C3E50' }]}>Age Range: <Text style={styles.value}>{ageRange}</Text></Text>
-      <Text style={[styles.text, { color: '#2C3E50' }]}>Selected Hairstyle:</Text>
-      <View style={styles.selectedHairstyleContainer}>
-        <Image style={styles.roundImagePlaceholder} source={{ uri: selectedHairstyleUri }} />
+
+      <Text style={[styles.details, { color: textColor }]}>Face Shape: <Text style={{ color: 'red' }}>{item.faceshape}</Text></Text>
+      <Text style={[styles.details, { color: textColor }]}>Gender: <Text style={{ color: 'red' }}>{item.gender}</Text></Text>
+      <Text style={[styles.details, { color: textColor }]}>Age Range: <Text style={{ color: 'red' }}>{item.agerange}</Text></Text>
+      <Text style={[styles.details, { color: textColor } ]}>Dress Code: <Text style={{ color: 'red' }}>{item.dresscode}</Text></Text>
+      <Text style={[styles.details, { color: textColor }]}>Hair Length: <Text style={{ color: 'red' }}>{item.hairlength}</Text></Text>
+      <Text style={[styles.details, { color: textColor }]}>Hairstyle Hransferred Image: </Text>
+
+      {/* Display hairstyle image centered */}
+      <View style={styles.hairstyleImageContainer}>
+        <Image source={{ uri: hairstyleImage }} style={styles.hairstyleImage} />
       </View>
-      <Text style={[styles.text, { color: '#2C3E50' }]}>Shared Image on Social Media:</Text>
-      <View style={styles.sharedImageContainer}>
-        <Image style={styles.roundImagePlaceholder} source={{ uri: sharedImageUri }} />
-      </View>
-      <View style={styles.thumbsContainer}>
-        <View style={styles.thumbsButton}>
-          <Icon name="thumbs-up" size={30} color="green" />
-          <Text style={[styles.thumbsCount, { color: '#2C3E50' }]}>{thumbsUpCount}</Text>
-        </View>
-        <View style={styles.thumbsButton}>
-          <Icon name="thumbs-down" size={30} color="red" />
-          <Text style={[styles.thumbsCount, { color: '#2C3E50' }]}>{thumbsDownCount}</Text>
-        </View>
-      </View>
-    </View>
+    </ScrollView>
   );
 };
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
-    padding: 50,
-    backgroundColor: '#fff',
+    padding: 20,
+    paddingBottom: 40, // Ensures there's space at the bottom for the scrollable content
   },
-  text: {
-    fontSize: 18,
-    marginBottom: 10,
+  details: {
+    fontSize: 16,
+    marginVertical: 5,
   },
-  imageContainer: {
+  boldText: {
+    fontWeight: 'bold', 
+    color: '#000',
+  },
+  imageRow: {
     flexDirection: 'row',
     justifyContent: 'space-between',
-    marginBottom: 20,
+    marginBottom: 16,
   },
-  imagePlaceholder: {
-    width: 100,
-    height: 100,
-    backgroundColor: '#ddd',
+  image: {
+    width: 140,
+    height: 140,
+    borderRadius: 75, // Make the image round
+    borderWidth: 2,
+    borderColor: '#ccc',
+    marginBottom: 10,
   },
-  label: {
-    fontSize: 16,
-    marginBottom: 5,
+  hairstyleImageContainer: {
+    alignItems: 'center', // Center the image horizontally
+    justifyContent: 'center', // Center the image vertically (if required)
+    marginTop: 20, // Add some margin for spacing
   },
-  value: {
-    fontWeight: 'bold',
-  },
-  selectedHairstyleContainer: {
-    alignItems: 'center',
-    marginTop: 10,
-  },
-  sharedImageContainer: {
-    alignItems: 'center',
-    marginTop: 10,
-  },
-  roundImagePlaceholder: {
-    width: 90,
-    height: 90,
-    backgroundColor: '#ddd',
-    borderRadius: 50,
-  },
-  thumbsContainer: {
-    flexDirection: 'row',
-    justifyContent: 'space-around',
-    marginTop: 20,
-  },
-  thumbsButton: {
-    flexDirection: 'row',
-    alignItems: 'center',
-  },
-  thumbsCount: {
-    marginLeft: 5,
-    fontSize: 18,
+  hairstyleImage: {
+    width: 250, // Adjust width based on preference
+    height: 250, // Adjust height based on preference
+    borderRadius: 12, // Add rounded corners for the hairstyle image
+    marginBottom: 20, // Add spacing from the next content
   },
 });
 
 export default DetailHistory;
-
-
