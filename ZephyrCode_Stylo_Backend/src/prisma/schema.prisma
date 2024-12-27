@@ -31,6 +31,8 @@ model User {
   phoneNumber    String?
 
    userhistory    UserHistory[]
+   SocialForumPosts SocialForumPost[] @relation("UserToSocialForumPosts") // Relation to SocialForumPost 
+
 }
 
 model Feedback {
@@ -60,11 +62,23 @@ model UserHistory {
   gender                      String
   faceshape                   String
   hairstyle_transferred_image_link String?
-  actionDateTime              DateTime  // Use DateTime for both date and time fields
   agerange                    String
   dresscode                   String
   hairlength                  String
+  actionDateTime              DateTime  // Use DateTime for both date and time fields
+
   
   // Define the foreign key relationship to User table
   user                        User      @relation(fields: [email], references: [email])
+}
+
+
+model SocialForumPost {
+  PostID      Int     @id @default(autoincrement())              // Primary key
+  email       String   // Foreign key referencing User
+  PostContent String
+  ThumbsUp    Int
+  ThumbsDown  Int
+
+  User        User     @relation("UserToSocialForumPosts", fields: [email], references: [email]) // Named relation
 }

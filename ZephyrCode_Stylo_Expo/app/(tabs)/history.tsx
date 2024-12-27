@@ -1,159 +1,117 @@
-import React, { useState, useEffect } from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, Image } from 'react-native';
+import React, { useEffect } from 'react';
+import { View, Text, FlatList, TouchableOpacity, StyleSheet, Image, ActivityIndicator, useColorScheme } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
-import Icon from 'react-native-vector-icons/FontAwesome';
-import {useRouter} from 'expo-router';
+import { NativeStackNavigationProp } from '@react-navigation/native-stack';
+import { useHistoryStore } from '../../store/useHistoryStore';
+import { useAuthStore } from '../../store/useStore';
 
-interface Props {
-  username: string;
-  profilePicture?: string;
+interface History {
+  id: string;
+  front_image_link: string;
+  side_image_link?: string | null;
+  actionDateTime: string;
 }
 
-const UserHistory: React.FC<Props> = ({ username, profilePicture }) => {
-  const [lastUsedDate, setLastUsedDate] = useState<string>(''); 
-  const [lastUsedTime, setLastUsedTime] = useState<string>(''); 
-  const navigation = useNavigation();
-  const router=useRouter();
-  
-  useEffect(() => {
-    const currentDateTime = new Date();
-    const date = currentDateTime.toLocaleDateString(); 
-    const time = currentDateTime.toLocaleTimeString(); 
-    setLastUsedDate(date); 
-    setLastUsedTime(time); 
-  }, []);
+type RootStackParamList = {
+  History: undefined;
+  DetailHistory: { item: History };
+};
 
-  const handleDetailsPress = () => {
-    // navigation.navigate('Register'); 
-    router.push('../DetailHistory')
+const HistoryPage: React.FC = () => {
+  const navigation = useNavigation<NativeStackNavigationProp<RootStackParamList>>();
+  const { history, fetchHistory } = useHistoryStore();
+  const { email } = useAuthStore();
+  const [isLoading, setIsLoading] = React.useState<boolean>(true);
+  const colorScheme = useColorScheme(); // Get the current theme (light or dark)
+
+  useEffect(() => {
+    if (email) {
+      fetchHistory(email).finally(() => setIsLoading(false));
+    }
+  }, [fetchHistory, email]);
+
+  const formatDateTime = (dateString: string): string => {
+    const date = new Date(dateString);
+
+    const options: Intl.DateTimeFormatOptions = {
+      year: 'numeric',
+      month: 'short',
+      day: 'numeric',
+      hour: '2-digit',
+      minute: '2-digit',
+      second: '2-digit',
+      hour12: true,
+    };
+
+    return date.toLocaleString('en-US', options);
   };
-  
+
+  const renderItem = ({ item }: { item: History }) => (
+    <View style={[styles.card, { backgroundColor: colorScheme === 'dark' ? '#333' : '#f8f8f8', borderColor: colorScheme === 'dark' ? '#555' : '#ddd' }]}>
+      <View style={styles.infoRow}>
+        <Text style={[styles.infoText, { color: colorScheme === 'dark' ? '#fff' : '#333' }]}>History ID: {item.id}</Text>
+        <Text style={[styles.infoText, { color: colorScheme === 'dark' ? '#fff' : '#333' }]}>{formatDateTime(item.actionDateTime)}</Text>
+      </View>
+      <View style={styles.imageRow}>
+        <Image source={{ uri: item.front_image_link }} style={styles.image} resizeMode="cover" />
+        {item.side_image_link && (
+          <Image source={{ uri: item.side_image_link }} style={styles.image} resizeMode="cover" />
+        )}
+      </View>
+      <TouchableOpacity
+        style={[styles.detailButton, { backgroundColor: colorScheme === 'dark' ? '#16A085' : '#2C3E50' }]}
+        onPress={() => navigation.navigate('DetailHistory', { item })}
+      >
+        <Text style={[styles.detailButtonText, { color: colorScheme === 'dark' ? '#fff' : '#fff' }]}>View Details</Text>
+      </TouchableOpacity>
+    </View>
+  );
+
+  if (isLoading) {
+    return <ActivityIndicator size="large" color={colorScheme === 'dark' ? '#fff' : '#0000ff'} style={styles.loader} />;
+  }
 
   return (
-    <View style={styles.container}>
-      <View style={styles.box}>
-        <View style={styles.profileSection}>
-          <View style={styles.profilePlaceholder}>
-            {profilePicture ? (
-              <Image source={{ uri: profilePicture }} style={styles.profileImage} />
-            ) : (
-              <Icon name="user" size={30} color="#ffffff" />
-            )}
-          </View>
-          <View style={styles.userInfo}>
-            <Text style={styles.userName}>User Name: {username}</Text>
-            {lastUsedDate && lastUsedTime ? (
-              <>
-                <View style={styles.lastUsedDateTimeContainer}>
-                  <Icon name="calendar" size={14} color="#777777" style={styles.icon} />
-                  <Text style={styles.lastUsedDate}>{lastUsedDate}</Text>
-                </View>
-                <View style={styles.lastUsedDateTimeContainer}>
-                  <Icon name="clock-o" size={14} color="#777777" style={styles.icon} />
-                  <Text style={styles.lastUsedTime}>{lastUsedTime}</Text>
-                </View>
-              </>
-            ) : (
-              <View style={styles.noHistoryContainer}>
-                <Icon name="calendar" size={30} color="#777777" style={styles.icon} />
-                <Icon name="clock-o" size={30} color="#777777" style={styles.icon} />
-              </View>
-            )}
-          </View>
-        </View>
-        <View style={styles.buttonContainer}>
-          <TouchableOpacity onPress={handleDetailsPress} style={styles.detailsButton}>
-            <Text style={styles.detailsButtonText}>Details</Text>
-          </TouchableOpacity>
-        </View>
-      </View>
+    <View style={[styles.container, { backgroundColor: colorScheme === 'dark' ? '#000' : '#fff' }]}>
+      <FlatList
+        data={history}
+        keyExtractor={(item) => item.id}
+        renderItem={renderItem}
+        ListEmptyComponent={<Text style={[styles.emptyText, { color: colorScheme === 'dark' ? '#fff' : 'gray' }]}>No history found.</Text>}
+      />
     </View>
   );
 };
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    backgroundColor: '#f5f5f5',
-  },
-  box: {
-    width: '90%',
-    backgroundColor: 'white',
-    padding: 20,
+  container: { flex: 1, padding: 20 },
+  card: {
+    padding: 15,
     borderRadius: 10,
+    marginBottom: 15,
+    borderWidth: 1,
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.8,
-    shadowRadius: 2,
+    shadowOpacity: 0.1,
+    shadowRadius: 3,
     elevation: 5,
   },
-  profileSection: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    marginBottom: 20,
-  },
-  profilePlaceholder: {
-    width: 50,
-    height: 50,
-    borderRadius: 25,
-    backgroundColor: '#d3d3d3', 
-    justifyContent: 'center',
-    alignItems: 'center',
-    marginRight: 10,
-  },
-  profileImage: {
-    width: 50,
-    height: 50,
-    borderRadius: 25,
-  },
-  userInfo: {
-    flex: 1,
-  },
-  userName: {
-    fontSize: 18,
-  },
-  lastUsedDateTimeContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    marginTop: 5,
-  },
-  lastUsedDate: {
-    fontSize: 14,
-    color: '#777777',
-    marginLeft: 5,
-  },
-  lastUsedTime: {
-    fontSize: 14,
-    color: '#777777',
-    marginLeft: 5,
-  },
-  noHistoryContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'center',
-    marginTop: 10,
-  },
-  icon: {
-    marginRight: 10,
-  },
-  buttonContainer: {
-    alignItems: 'center',
-    marginTop: 10,
-  },
-  detailsButton: {
-    backgroundColor: '#007bff',
+  infoRow: { flexDirection: 'row', justifyContent: 'space-between', marginBottom: 10 },
+  infoText: { fontSize: 14, fontWeight: 'bold' },
+  imageRow: { flexDirection: 'row', justifyContent: 'space-between', marginBottom: 10 },
+  image: { width: 100, height: 100, borderRadius: 50, borderWidth: 2 },
+  detailButton: {
     paddingVertical: 10,
     paddingHorizontal: 20,
     borderRadius: 5,
+    alignItems: 'center',
+    marginTop: 10,
+    width: 140,
+    alignSelf: 'center',
   },
-  detailsButtonText: {
-    color: '#ffffff',
-    fontSize: 16,
-  },
+  detailButtonText: { fontWeight: 'bold' },
+  loader: { flex: 1, justifyContent: 'center', alignItems: 'center' },
+  emptyText: { textAlign: 'center', fontSize: 18 },
 });
 
-export default UserHistory;
-
-
+export default HistoryPage;

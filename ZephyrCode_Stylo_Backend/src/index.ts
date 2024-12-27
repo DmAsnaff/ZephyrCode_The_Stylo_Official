@@ -303,8 +303,27 @@ app.post('/users', (req, res) => {
   return res.send("success")
 })
 
+
+
+app.get('/user-history', async (req, res) => {
+  const email = Array.isArray(req.query.email) ? req.query.email[0] : req.query.email;
+
+if (typeof email === 'string') {
+  const history = await prisma.userHistory.findMany({
+    where: { email },
+    orderBy: { actionDateTime: 'desc' },
+  });
+  res.json(history);
+} else {
+  res.status(400).json({ error: 'Invalid email format' });
+}
+
+});
+
+
 app.use(authenticationRouter)
 app.use(feedbackRouter)
+
 
 app.listen(PORT, () => {
   console.log("Backend is running on", PORT)
