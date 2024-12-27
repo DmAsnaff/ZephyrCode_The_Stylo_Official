@@ -85,6 +85,8 @@ export default function RootLayout() {
         <Stack.Screen name="edit_profile"options={{ title:'Profile',headerShown: true,   }}/>
         <Stack.Screen name="ForgotPasswordScreen" options={{title: 'ForgotPasswordScreen' ,headerShown: false, headerStyle:{backgroundColor:'#fff'} }}/>
         <Stack.Screen name="ResetPasswordScreen" options={{title: 'ResetPasswordScreen' ,headerShown: false, headerStyle:{backgroundColor:'#fff'} }}/>
+        <Stack.Screen name="VerifyCodeScreen" options={{title: 'VerifyCodeScreen' ,headerShown: false, headerStyle:{backgroundColor:'#fff'} }}/>
+
       </Stack>
       {/* {isAuthLoaded && (
         token === null ? <Redirect href="/" /> : <Redirect href="/(tabs)" />

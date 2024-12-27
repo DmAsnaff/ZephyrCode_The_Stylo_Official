@@ -31,9 +31,8 @@ model User {
   phoneNumber    String?
 
    userhistory    UserHistory[]
-   SocialForumPosts SocialForumPost[] @relation("UserToSocialForumPosts") // Relation to SocialForumPost 
-
 }
+
 
 model Feedback {
   id        Int      @id @default(autoincrement())

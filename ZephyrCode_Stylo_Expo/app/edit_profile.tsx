@@ -1,250 +1,192 @@
-import React, { useState } from 'react';
-import { View, SafeAreaView, StyleSheet, Image, TouchableOpacity, TextInput, Text, Alert } from 'react-native';
-import { FontAwesome } from '@expo/vector-icons';
-import Button from '@/components/buttons';
+import React, { useEffect, useState } from 'react';
+import { View, SafeAreaView, StyleSheet, Alert, Image, TouchableOpacity } from 'react-native';
+import { TextInput, Title } from 'react-native-paper';
+import { useRouter } from 'expo-router';
+import { useAuthStore } from '../store/useStore';
+import axiosInstance from '@/constants/axiosInstance';
+import { Formik } from 'formik';
+import * as Yup from 'yup';
 import * as ImagePicker from 'expo-image-picker';
-import { useNavigation } from '@react-navigation/native';
-import {useRouter} from 'expo-router';
+import Button from '@/components/buttons';
 
 const EditProfile: React.FC = () => {
-  const [fullName, setFullName] = useState('');
-  const [username, setUsername] = useState('');
-  const [email, setEmail] = useState('');
-  const [address, setAddress] = useState('');
-  const [dob, setDob] = useState('');
-  const [phoneNumber, setPhoneNumber] = useState('');
   const router = useRouter();
-
-
-  const handleSubmit = () => {
-    
-    const userData = { fullName, username, email, address, dob, phoneNumber };
-   
-    // router.push('profile_screen', userData);
-    router.push('profile_screen');
-
-  };
-
+  const email = useAuthStore((state) => state.email);
   const [showOptions, setShowOptions] = useState(false);
   const [picture, setPicture] = useState<string | null>(null);
-  const navigation = useNavigation();
+  const [profilePicture, setProfilePicture] = useState<string | null>(null);
+  const [initialValues, setInitialValues] = useState({
+    fullName: '',
+    userName: '',
+    address: '',
+    phoneNumber: '',
+  });
 
-  const handleCameraIconPress = () => {
-    setShowOptions(!showOptions);
+  useEffect(() => {
+    const fetchUserDetails = async () => {
+      try {
+        const response = await axiosInstance.post('/userProfile', { email });
+        setInitialValues({
+          fullName: response.data.fullName || '',
+          userName: response.data.userName || '',
+          address: response.data.address || '',
+          phoneNumber: response.data.phoneNumber || '',
+        });
+        // setProfilePicture(response.data.profilePicture || null);
+      } catch (error) {
+        console.error('Error fetching user details:', error);
+        Alert.alert('Error', 'Failed to load user details.');
+      }
+    };
+
+    fetchUserDetails();
+  }, [email]);
+
+  const handleUpdateProfile = async (values: typeof initialValues) => {
+    try {
+      // await axiosInstance.put('/updateUserProfile', { email, ...values, profilePicture });
+      const response = await axiosInstance.post('/updateUserProfile', { email, ...values });
+
+      if (response.status === 200) {
+        Alert.alert('Success', response.data.message);
+        router.replace('/(tabs)/Profile');
+      } else {
+        Alert.alert('Error', 'Failed to update profile. Please try again.');
+      }
+    } catch (error) {
+      console.error('Error updating profile:', error);
+      Alert.alert('Error', 'Failed to update profile. Please try again.');
+    }
   };
 
-  const pickFromGallery = async () => {
-    const permissionResult = await ImagePicker.requestMediaLibraryPermissionsAsync();
-
-    if (permissionResult.granted === false) {
-      Alert.alert("You need to give permission to access the gallery");
-      return;
-    }
-
+  const pickImage = async () => {
     const result = await ImagePicker.launchImageLibraryAsync({
       mediaTypes: ImagePicker.MediaTypeOptions.Images,
       allowsEditing: true,
+      aspect: [1, 1],
       quality: 1,
     });
 
     if (!result.canceled) {
-      setPicture(result.assets[0].uri);
+      const uri = result.assets[0].uri;
+      setProfilePicture(uri);
     }
   };
 
-  const pickFromCamera = async () => {
-    const permissionResult = await ImagePicker.requestCameraPermissionsAsync();
-
-    if (permissionResult.granted === false) {
-      Alert.alert("You need to give permission to access the camera");
-      return;
-    }
-
-    const result = await ImagePicker.launchCameraAsync({
-      mediaTypes: ImagePicker.MediaTypeOptions.Images,
-      allowsEditing: true,
-      quality: 1,
-    });
-
-    if (!result.canceled) {
-      setPicture(result.assets[0].uri);
-    }
-  };
+  const validationSchema = Yup.object({
+    fullName: Yup.string().required('Full name is required'),
+    userName: Yup.string().required('User name is required'),
+    address: Yup.string().required('Address is required'),
+    phoneNumber: Yup.string().required('Phone number is required'),
+  });
 
   return (
     <SafeAreaView style={styles.container}>
-      <View style={styles.profileContainer}>
-        <TouchableOpacity style={styles.cameraIcon} onPress={handleCameraIconPress}>
-          <FontAwesome name="camera" size={20} color="#FFFFFF" />
-        </TouchableOpacity>
-        {showOptions && (
-          <View style={styles.optionsContainer}>
-            <TouchableOpacity style={styles.option} onPress={pickFromCamera}>
-              <View style={styles.optionContent}>
-                <FontAwesome name="camera" size={20} color="#000" />
-                <Text style={styles.optionText}> Camera</Text>
-              </View>
-            </TouchableOpacity>
-            <TouchableOpacity style={styles.option} onPress={pickFromGallery}>
-              <View style={styles.optionContent}>
-                <FontAwesome name="upload" size={20} color="#000" />
-                <Text style={styles.optionText}>Upload</Text>
-              </View>
-            </TouchableOpacity>
-            <TouchableOpacity style={styles.option} onPress={() => setShowOptions(false)}>
-              <View style={styles.optionContent}>
-                <FontAwesome name="times" size={20} color="#000" />
-                <Text style={styles.optionText}>Cancel</Text>
-              </View>
-            </TouchableOpacity>
-          </View>
-        )}
-        <View style={{paddingBottom:35}}>
-        <Image
-          source={picture ? { uri: picture } : require('@/assets/images/profile.png')}
-          style={styles.profilePic}
-          accessibilityLabel="Profile Picture"
-        />
-        </View>
+      <Formik
+        enableReinitialize
+        initialValues={initialValues}
+        validationSchema={validationSchema}
+        onSubmit={handleUpdateProfile}
+      >
+        {({ handleChange, handleBlur, handleSubmit, values, errors, touched }) => (
+          <View style={styles.form}>
+            <View style={styles.profileSection}>
+              <TouchableOpacity onPress={pickImage}>
+                <Image
+                  source={profilePicture ? { uri: profilePicture } : require('@/assets/images/profile.png')}
+                  style={styles.profilePic}
+                  accessibilityLabel="Profile Picture"
+                />
+              </TouchableOpacity>
+              
+              <Title style={styles.emailText}>{email}</Title>
+            </View>
 
-        <View style={styles.action}>
-          <FontAwesome name="user-o" color="#05375a" size={20} />
-          <TextInput
-            placeholder="Full Name"
-            placeholderTextColor="#666666"
-            autoCorrect={false}
-            style={styles.textInput}
-          />
-        </View>
-        <View style={styles.action}>
-          <FontAwesome name="user-o" color="#05375a" size={20} />
-          <TextInput
-            placeholder="Username"
-            placeholderTextColor="#666666"
-            autoCorrect={false}
-            style={styles.textInput}
-          />
-        </View>
-        <View style={styles.action}>
-          <FontAwesome name="envelope-o" color="#05375a" size={20} />
-          <TextInput
-            placeholder="Email"
-            placeholderTextColor="#666666"
-            autoCorrect={false}
-            keyboardType="email-address"
-            style={styles.textInput}
-          />
-        </View>
-        <View style={styles.action}>
-          <FontAwesome name="address-card-o" color="#05375a" size={20} />
-          <TextInput
-            placeholder="Address"
-            placeholderTextColor="#666666"
-            autoCorrect={false}
-            style={styles.textInput}
-          />
-        </View>
-        <View style={styles.action}>
-          <FontAwesome name="calendar" color="#05375a" size={20} />
-          <TextInput
-            placeholder="Date of Birth"
-            placeholderTextColor="#666666"
-            autoCorrect={false}
-            style={styles.textInput}
-          />
-        </View>
-        <View style={styles.action}>
-          <FontAwesome name="phone" color="#05375a" size={20} />
-          <TextInput
-            placeholder="Phone Number"
-            placeholderTextColor="#666666"
-            autoCorrect={false}
-            keyboardType="phone-pad"
-            style={styles.textInput}
-            value={phoneNumber}
-            onChangeText={setPhoneNumber}
-          />
-        </View>
-
-        
-      </View>
-      <View style={{alignItems: 'center'}}>
+            <TextInput
+              label="Full Name"
+              value={values.fullName}
+              onChangeText={handleChange('fullName')}
+              onBlur={handleBlur('fullName')}
+              style={styles.input}
+              error={touched.fullName && !!errors.fullName}
+            />
+            <TextInput
+              label="User Name"
+              value={values.userName}
+              onChangeText={handleChange('userName')}
+              onBlur={handleBlur('userName')}
+              style={styles.input}
+              error={touched.userName && !!errors.userName}
+            />
+            <TextInput
+              label="Address"
+              value={values.address}
+              onChangeText={handleChange('address')}
+              onBlur={handleBlur('address')}
+              style={styles.input}
+              error={touched.address && !!errors.address}
+            />
+            <TextInput
+              label="Phone Number"
+              value={values.phoneNumber}
+              onChangeText={handleChange('phoneNumber')}
+              onBlur={handleBlur('phoneNumber')}
+              style={styles.input}
+              keyboardType="phone-pad"
+              error={touched.phoneNumber && !!errors.phoneNumber}
+            />
       <Button
         title="Submit"
-        onPress={() => router.push('profile_screen')}
+        onPress={() => {
+          handleSubmit(); // Call handleSubmit
+          // router.push('/(tabs)/Profile'); // Navigate after submission
+        }}
         filled
-        style={styles.submitButton}
+        style={styles.button}
       />
-
-      </View>
-
+          </View>
+        )}
+      </Formik>
     </SafeAreaView>
   );
 };
 
+export default EditProfile;
+
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+    paddingHorizontal: 20,
+    paddingTop: 40,
   },
-  profileContainer: {
+  form: {
+    flex: 0,
+    justifyContent: 'center',
+  },
+  profileSection: {
     alignItems: 'center',
-    paddingTop: 20,
-      paddingHorizontal: 30,
+    marginBottom: 30,
   },
   profilePic: {
     width: 100,
     height: 100,
     borderRadius: 50,
+    marginBottom: 10,
   },
-  cameraIcon: {
-    position: 'absolute',
-    top: '37%',
-    left: '65%',
-    backgroundColor: 'rgba(0, 0, 0, 0.6)',
-    borderRadius: 20,
-    padding: 10,
-    transform: [{ translateX: -6 }, { translateY: -5 }],
+  emailText: {
+    fontSize: 18,
+    color: '#2C3E50',
   },
-  action: {
-    flexDirection: 'row',
-    marginTop: 0,
-    borderBottomWidth: 1,
-    borderBottomColor: '#f2f2f2',
-    paddingBottom: 5,
-  },
-  textInput: {
-    flex: 1,
-    marginTop: -1,
-    paddingLeft: 10,
-    color: '#05375a',
+  input: {
+    marginBottom: 15,
   },
   submitButton: {
     marginTop: 70,
     marginBottom: 4,
-    
   },
-  optionsContainer: {
-    position: 'absolute',
-    top: '45%',
-    left: '45%',
-    backgroundColor: '#FFFFFF',
-    borderRadius: 10,
-    padding: 10,
-    zIndex: 1,
-  },
-  option: {
-    paddingVertical: 10,
-  },
-  optionContent: {
-    flexDirection: 'row',
-    alignItems: 'center',
-  },
-  optionText: {
-    fontSize: 16,
-    marginLeft: 10,
+  button: {
+    marginTop: 20,
+    borderColor: '#2C3E50',
+    backgroundColor: '#2C3E50',
   },
 });
-
-export default EditProfile;
-
-

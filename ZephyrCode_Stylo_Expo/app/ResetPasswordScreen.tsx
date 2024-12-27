@@ -1,105 +1,61 @@
 import React from 'react';
-import { StyleSheet, Text, TextInput, Alert, View } from 'react-native';
+import { TextInput, Alert } from 'react-native';
 import { Formik } from 'formik';
 import * as yup from 'yup';
-import { RouteProp } from '@react-navigation/native';
-import ParallaxScrollView from '@/components/ParallaxScrollView';
-import Button from '@/components/buttons';
 import axiosInstance from '@/constants/axiosInstance';
+import Button from '@/components/buttons';
+import ParallaxScrollView from '@/components/ParallaxScrollView';
+import { AxiosError } from 'axios';
+import { useRouter,useLocalSearchParams } from 'expo-router';
 
-// Define the shape of your route params
-type RouteParams = {
-  ResetPassword: {
-    token: string;
-  };
-};
+const ResetPasswordScreen = ({ route }: any) => {
+  const { email } = useLocalSearchParams(); // Extract query parameters
+  const router = useRouter();
 
-// Define the props for the component
-type Props = {
-  route: RouteProp<RouteParams, 'ResetPassword'>;
-};
+  const validationSchema = yup.object().shape({
+    password: yup.string().min(6, 'Password must be at least 6 characters').required('Password is required'),
+  });
 
-// Define the shape of your form values
-interface FormValues {
-  token: string;
-  password: string;
-}
-
-const validationSchema = yup.object().shape({
-  token: yup.string().required('Token is required'),
-  password: yup.string().min(6, 'Password must be at least 6 characters').required('Password is required'),
-});
-
-const ResetPasswordScreen: React.FC<Props> = ({ route }) => {
-  const { token } = route.params;
-
-  const handleResetPassword = async (values: FormValues) => {
+  const handleResetPassword = async (values: { password: string }) => {
     try {
-      await axiosInstance.post('/reset-password', values);
-      Alert.alert('Success', 'Password has been updated.');
-    } catch (error) {
-      Alert.alert('Error', 'Failed to reset password.');
+      await axiosInstance.post('/resetPassword', { email, password: values.password });
+      Alert.alert('Success', 'Password reset successfully.');
+      router.replace('/login'); // Redirect to login page
+    } catch (err: unknown) {
+      if (err instanceof AxiosError && err.response) {
+        Alert.alert('Error', err.response.data.message || 'Failed to reset password.');
+      } else {
+        Alert.alert('Error', 'An unexpected error occurred.');
+      }
     }
   };
 
   return (
-    <View style={styles.container}>
-      <Formik
-        initialValues={{ token, password: '' }}
-        validationSchema={validationSchema}
-        onSubmit={handleResetPassword}
-      >
-        {({ values, handleChange, handleBlur, handleSubmit, errors, touched }) => (
-          <ParallaxScrollView
-            headerBackgroundColor={{ light: '#2C3E50', dark: '#353636' }}
-            headerTitle="Enter your Token"
-            headerSubtitle='Create new password'
-          >
-            <Text style={styles.header}>Reset Password</Text>
-            <TextInput
-              placeholder="Enter your token"
-              value={values.token}
-              onChangeText={handleChange('token')}
-              onBlur={handleBlur('token')}
-              style={styles.input}
-              editable={false}
-            />
+    <Formik
+      initialValues={{ password: '' }}
+      validationSchema={validationSchema}
+      onSubmit={handleResetPassword}
+    >
+      {({ values, handleChange, handleBlur, handleSubmit }) => (
+        <ParallaxScrollView
+          headerBackgroundColor={{ light: '#2C3E50', dark: '#353636' }}
+          headerTitle="Reset Password"
+          headerSubtitle="Enter your new password"
+        >
+          <>
             <TextInput
               placeholder="Enter new password"
+              secureTextEntry
               value={values.password}
               onChangeText={handleChange('password')}
               onBlur={handleBlur('password')}
-              style={styles.input}
-              secureTextEntry
             />
-            {touched.password && errors.password && (
-              <Text style={styles.errorText}>{errors.password}</Text>
-            )}
             <Button title="Reset Password" onPress={handleSubmit} />
-          </ParallaxScrollView>
-        )}
-      </Formik>
-    </View>
+          </>
+        </ParallaxScrollView>
+      )}
+    </Formik>
   );
 };
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-  },
-  header: {
-    fontSize: 18,
-    marginBottom: 20,
-  },
-  input: {
-    borderBottomWidth: 1,
-    marginBottom: 20,
-    padding: 8,
-  },
-  errorText: {
-    color: 'red',
-    marginBottom: 10,
-  },
-});
 
 export default ResetPasswordScreen;
