@@ -19,7 +19,8 @@
       "adaptiveIcon": {
         "foregroundImage": "./assets/images/zephyrcode_icon.png",
         "backgroundColor": "#ffffff"
-      }
+      },
+      "newArchEnabled": true
     },
     "web": {
       "bundler": "metro",
