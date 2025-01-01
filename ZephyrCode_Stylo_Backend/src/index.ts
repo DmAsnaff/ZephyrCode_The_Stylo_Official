@@ -406,31 +406,55 @@ app.use(cors())
 
 app.use(express.json());
 
-// Define a route to insert hairstyles
+// // Define a route to insert hairstyles
+// app.post('/hairstyles', async (req, res) => {
+//   try {
+//     const { gender, face_shape, age_range, hairLength, dresscode, imageLink, how_to_achieve, Products_to_achieve } = req.body;
+
+//     const newHairstyle = await prisma.hairstyle.create({
+//       data: {
+//         gender,
+//         face_shape,
+//         age_range,
+//         hairLength,
+//         dresscode,
+//         imageLink,
+//         how_to_achieve,
+//         Products_to_achieve
+//       },
+//     });
+
+//     res.json(newHairstyle);
+//   } catch (error) {
+//     console.error(error);
+//     res.status(500).json({ error: 'Error creating hairstyle entry' });
+//   }
+// });
+
+// start here .....................................................................................
 app.post('/hairstyles', async (req, res) => {
   try {
-    const { gender, face_shape, age_range, hairLength, dresscode, imageLink, how_to_achieve, Products_to_achieve } = req.body;
+    const hairstyles = req.body; // Expecting an array of hairstyle objects
 
-    const newHairstyle = await prisma.hairstyle.create({
-      data: {
-        gender,
-        face_shape,
-        age_range,
-        hairLength,
-        dresscode,
-        imageLink,
-        how_to_achieve,
-        Products_to_achieve
-      },
+    if (!Array.isArray(hairstyles) || hairstyles.length === 0) {
+      return res.status(400).json({ error: 'Request body must be a non-empty array of hairstyles.' });
+    }
+
+    const createdHairstyles = await prisma.hairstyle.createMany({
+      data: hairstyles,
+      skipDuplicates: true, // Avoids creating duplicate entries if required
     });
 
-    res.json(newHairstyle);
+    res.status(201).json({
+      message: `${createdHairstyles.count} hairstyle(s) added successfully.`,
+    });
   } catch (error) {
-    console.error(error);
-    res.status(500).json({ error: 'Error creating hairstyle entry' });
+    console.error('Error inserting hairstyles:', error);
+    res.status(500).json({ error: 'Failed to insert hairstyles.' });
   }
 });
 
+//end  here ......................................................................................
 
 
 app.get('/', (req, res) => {
