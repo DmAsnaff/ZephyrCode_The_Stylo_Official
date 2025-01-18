@@ -30,7 +30,9 @@ model User {
   address        String?
   phoneNumber    String?
 
-   userhistory    UserHistory[]
+  userhistory    UserHistory[]
+  posts          Post[] // Add this field to define the relation with Post
+  votes          Vote[]
 
 }
 
@@ -50,8 +52,8 @@ model hairstyle {
   hairLength   String
   dresscode    String
   imageLink    String
-  how_to_achieve String
-  Products_to_achieve String
+  how_to_achieve String @db.Text
+  Products_to_achieve String @db.Text
 }
 
 model UserHistory {
@@ -69,4 +71,44 @@ model UserHistory {
   
   // Define the foreign key relationship to User table
   user                        User      @relation(fields: [email], references: [email])
+}
+
+
+// model Post {
+//   id        Int      @id @default(autoincrement()) // Primary key for each post
+//   email     String   // Reference to the user who created the post
+//   imageUrl  String   @db.Text // URL to the image associated with the post
+//   thumbsUp  Int      @default(0) // Count of thumbs-up reactions
+//   thumbsDown Int     @default(0) // Count of thumbs-down reactions
+//   createdAt DateTime @default(now()) // Timestamp when the post was created
+
+//   // Relationship to the User model
+//   user      User     @relation(fields: [email], references: [email])
+// }
+
+
+
+model Post {
+  postId     Int       @id @default(autoincrement())
+  userId     Int       // Foreign key to the User model's `id`
+  imageUrl   String
+  thumbsUp   Int       @default(0)
+  thumbsDown Int       @default(0)
+  createdAt  DateTime  @default(now())
+  
+  user       User      @relation(fields: [userId], references: [id])  // Correct reference to `id` in User model
+  votes      Vote[]    // One-to-many relation with Vote
+}
+
+model Vote {
+  voteId    Int       @id @default(autoincrement())
+  userId    Int       // Foreign key to User's `id`
+  postId    Int       // Foreign key to Post's `postId`
+  voteType  String    // 'up' or 'down'
+  createdAt DateTime  @default(now())
+
+  post      Post      @relation(fields: [postId], references: [postId])
+  user      User      @relation(fields: [userId], references: [id])  // Correct reference to `id` in User model
+  
+  @@unique([userId, postId]) // Ensure one vote per user per post
 }
