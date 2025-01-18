@@ -370,6 +370,8 @@ import { v4 as uuidv4 } from 'uuid';
 import bodyParser from "body-parser"
 import authenticationRouter from './routes/autheticationRouter'
 import feedbackRouter from './routes/feedbackRouter'
+import forgetRouter from './routes/forgotRouters'
+import profileRouter from './routes/profileRouter'
 import cors from 'cors'
 // import { bucket } from "./constant/firebaseAdmin"
 import multer from 'multer';
@@ -764,8 +766,244 @@ app.post('/users', (req, res) => {
   return res.send("success")
 })
 
+app.get('/user-history', async (req, res) => {
+  const email = Array.isArray(req.query.email) ? req.query.email[0] : req.query.email;
+
+if (typeof email === 'string') {
+  const history = await prisma.userHistory.findMany({
+    where: { email },
+    orderBy: { actionDateTime: 'desc' },
+  });
+  res.json(history);
+} else {
+  res.status(400).json({ error: 'Invalid email format' });
+}
+
+});
+
+// app.get('/posts', async (req, res) => {
+//   try {
+//       const posts = await prisma.post.findMany({
+//           include: {
+//               user: {
+//                   select: {
+//                       userName: true,
+//                       profilePicture: true,
+//                       email: true,
+//                   },
+//               },
+//           },
+//           orderBy: {
+//               createdAt: 'desc',
+//           },
+//       });
+//       res.status(200).json(posts);
+//   } catch (error) {
+//       console.error('Error fetching posts:', error);
+//       res.status(500).json({ error: 'Unable to fetch posts' });
+//   }
+// });
+
+app.get('/posts', async (req, res) => {
+  try {
+      const posts = await prisma.post.findMany({
+          include: {
+              user: {
+                  select: {
+                      userName: true,
+                      profilePicture: true,
+                  },
+              },
+              votes: {
+                select: {
+                    voteType: true,
+                    // userEmail: true, // Include user email to check reactions
+                },
+            },
+          },
+      });
+
+      // Map posts to include aggregated reaction counts
+      const formattedPosts = posts.map((post) => {
+          const thumbsUp = post.votes.filter((vote) => vote.voteType === 'up').length;
+          const thumbsDown = post.votes.filter((vote) => vote.voteType === 'down').length;
+
+          return {
+              ...post,
+              thumbsUp,
+              thumbsDown,
+          };
+      });
+
+      res.status(200).json(formattedPosts);
+  } catch (error) {
+      console.error('Error fetching posts:', error);
+      res.status(500).json({ error: 'Unable to fetch posts' });
+  }
+});
+
+
+
+// to post the image from the GAN Model
+app.post('/posts', async (req, res) => {
+  const { email, imageUrl } = req.body;
+
+  try {
+      const user = await prisma.user.findUnique({
+          where: { email },
+      });
+
+      if (!user) {
+          return res.status(404).json({ message: 'User not found' });
+      }
+
+      const post = await prisma.post.create({
+          data: {
+              userId: user.id,
+              imageUrl,
+          },
+      });
+
+      res.status(201).json({ message: 'Post created successfully', post });
+  } catch (error) {
+      console.error('Error creating post:', error);
+      res.status(500).json({ error: 'Unable to create post' });
+  }
+});
+
+
+
+app.post('/posts/:postId/react', async (req, res) => {
+  const { email, voteType } = req.body;
+  const { postId } = req.params;
+
+  try {
+      const user = await prisma.user.findUnique({
+          where: { email },
+      });
+
+      if (!user) {
+          return res.status(404).json({ message: 'User not found' });
+      }
+
+      const existingVote = await prisma.vote.findUnique({
+          where: {
+              userId_postId: {
+                  userId: user.id,
+                  postId: Number(postId),
+              },
+          },
+      });
+
+      if (existingVote) {
+          // Update vote if it differs from the current one
+          if (existingVote.voteType !== voteType) {
+              await prisma.vote.update({
+                  where: { voteId: existingVote.voteId },
+                  data: { voteType },
+              });
+
+              // Update thumbsUp and thumbsDown in Posts table
+              const incrementField = voteType === 'up' ? 'thumbsUp' : 'thumbsDown';
+              const decrementField = voteType === 'up' ? 'thumbsDown' : 'thumbsUp';
+
+              await prisma.post.update({
+                  where: { postId: Number(postId) },
+                  data: {
+                      [incrementField]: { increment: 1 },
+                      [decrementField]: { decrement: 1 },
+                  },
+              });
+
+              return res.status(200).json({ message: 'Vote updated successfully' });
+          }
+
+          return res.status(400).json({ message: 'You already reacted with this type' });
+      }
+
+      // Add new vote
+      await prisma.vote.create({
+          data: {
+              userId: user.id,
+              postId: Number(postId),
+              voteType,
+          },
+      });
+
+      // Increment the corresponding reaction count in Posts table
+      const incrementField = voteType === 'up' ? 'thumbsUp' : 'thumbsDown';
+
+      await prisma.post.update({
+          where: { postId: Number(postId) },
+          data: { [incrementField]: { increment: 1 } },
+      });
+
+      res.status(201).json({ message: 'Vote added successfully' });
+  } catch (error) {
+      console.error('Error reacting to post:', error);
+      res.status(500).json({ error: 'Unable to react to post' });
+  }
+});
+
+// app.post('/posts/:postId/react', async (req, res) => {
+//   const { email, reaction } = req.body;
+//   const { postId } = req.params;
+
+//   try {
+//       const incrementField = reaction === 'up' ? 'thumbsUp' : 'thumbsDown';
+//       const decrementField = reaction === 'up' ? 'thumbsDown' : 'thumbsUp';
+
+//       const existingVote = await prisma.post.findUnique({
+//           where: { email_postId: { email, postId: Number(postId) } },
+//       });
+
+//       if (existingVote) {
+//           if (existingVote.reaction === reaction) {
+//               return res.status(400).json({ message: 'Already reacted' });
+//           }
+
+//           await prisma.vote.update({
+//               where: { id: existingVote.id },
+//               data: { reaction },
+//           });
+
+//           await prisma.post.update({
+//               where: { id: Number(postId) },
+//               data: {
+//                   [incrementField]: { increment: 1 },
+//                   [decrementField]: { decrement: 1 },
+//               },
+//           });
+
+//           return res.status(200).json({ message: 'Reaction updated successfully' });
+//       }
+
+//       await prisma.vote.create({
+//           data: {
+//               email,
+//               postId: Number(postId),
+//               reaction,
+//           },
+//       });
+
+//       await prisma.post.update({
+//           where: { id: Number(postId) },
+//           data: { [incrementField]: { increment: 1 } },
+//       });
+
+//       res.status(201).json({ message: 'Reaction added successfully' });
+//   } catch (error) {
+//       console.error('Error reacting to post:', error);
+//       res.status(500).json({ error: 'Unable to react to post' });
+//   }
+// });
+
+
 app.use(authenticationRouter)
 app.use(feedbackRouter)
+app.use(forgetRouter)
+app.use(profileRouter)
+
 
 app.listen(PORT, () => {
   console.log("Backend is running on", PORT)
